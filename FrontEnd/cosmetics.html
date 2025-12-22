@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>美妆护肤 - 在线电商平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="common.css">
+    <style>
+        /* 美妆护肤页面特有样式 */
+        .category-header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .category-header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .category-header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        /* 商品样式 */
+        .product-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #333;
+            border-left: 4px solid #ff0036;
+            padding-left: 10px;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+        }
+        
+        .product-card {
+            border: 1px solid #eee;
+            border-radius: 6px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background-color: white;
+            cursor: pointer;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        }
+        
+        .product-image {
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+        
+        .product-info {
+            padding: 15px;
+        }
+        
+        .product-name {
+            font-size: 14px;
+            height: 40px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .product-price {
+            color: #ff0036;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .product-price span {
+            font-size: 14px;
+            color: #999;
+            text-decoration: line-through;
+            margin-left: 5px;
+        }
+        
+        .add-to-cart {
+            background-color: #ff0036;
+            color: white;
+            border: none;
+            padding: 8px 0;
+            width: 100%;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .add-to-cart:hover {
+            background-color: #e60031;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 1240px) {
+            .product-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .product-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="welcome-text">欢迎来到在线电商平台</div>
+            <div class="top-links">
+                <a href="index.html">登录</a>
+                <a href="index.html">注册</a>
+                <a href="cart.html">我的订单</a>
+                <a href="#">客户服务</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 主导航栏 -->
+    <header class="main-nav">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html" style="color: inherit; text-decoration: none;">
+                    <i class="fas fa-shopping-bag"></i>
+                    E-Shop
+                </a>
+            </div>
+            
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="搜索商品...">
+                <button id="searchButton"><i class="fas fa-search"></i></button>
+            </div>
+            
+            <div class="user-actions">
+                <a class="nav-link" href="index.html">
+                    <i class="fas fa-home"></i>
+                    <span>首页</span>
+                </a>
+                <a class="nav-link" href="cart.html">
+                    <div class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <div class="cart-count" id="cartCount">0</div>
+                    </div>
+                    <span>购物车</span>
+                </a>
+                <div class="user-avatar" id="userAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- 分类导航 -->
+    <nav class="category-nav">
+        <div class="container">
+            <ul class="category-list">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="electronics.html">电子产品</a></li>
+                <li><a href="clothing.html">服装服饰</a></li>
+                <li><a href="appliances.html">家用电器</a></li>
+                <li><a href="cosmetics.html" class="active">美妆护肤</a></li>
+                <li><a href="books.html">图书音像</a></li>
+                <li><a href="food.html">食品生鲜</a></li>
+                <li><a href="sports.html">运动户外</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- 分类页面头部 -->
+    <div class="category-header">
+        <div class="container">
+            <h1>美妆护肤</h1>
+            <p>美丽肌肤，从心开始</p>
+        </div>
+    </div>
+    
+    <!-- 主要内容区域 -->
+    <div class="container main-content">
+        <!-- 促销横幅 -->
+        <div class="banner" style="margin-bottom: 30px; height: 300px; border-radius: 8px; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="美妆护肤促销" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        
+        <!-- 热门推荐 -->
+        <section class="product-section">
+            <h2 class="section-title">热门美妆</h2>
+            <div class="product-grid" id="hotProducts"></div>
+        </section>
+        
+        <!-- 护肤产品 -->
+        <section class="product-section">
+            <h2 class="section-title">护肤产品</h2>
+            <div class="product-grid" id="skincareProducts"></div>
+        </section>
+        
+        <!-- 彩妆产品 -->
+        <section class="product-section">
+            <h2 class="section-title">彩妆产品</h2>
+            <div class="product-grid" id="makeupProducts"></div>
+        </section>
+    </div>
+    
+    <!-- 页脚 -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>购物指南</h3>
+                <ul>
+                    <li><a href="#">购物流程</a></li>
+                    <li><a href="#">会员介绍</a></li>
+                    <li><a href="#">常见问题</a></li>
+                    <li><a href="#">联系客服</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>配送方式</h3>
+                <ul>
+                    <li><a href="#">上门自提</a></li>
+                    <li><a href="#">配送服务</a></li>
+                    <li><a href="#">配送费用</a></li>
+                    <li><a href="#">物流查询</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>支付方式</h3>
+                <ul>
+                    <li><a href="#">在线支付</a></li>
+                    <li><a href="#">货到付款</a></li>
+                    <li><a href="#">分期付款</a></li>
+                    <li><a href="#">礼品卡支付</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>售后服务</h3>
+                <ul>
+                    <li><a href="#">退换货政策</a></li>
+                    <li><a href="#">退款说明</a></li>
+                    <li><a href="#">保修政策</a></li>
+                    <li><a href="#">投诉建议</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>© 2023 在线电商平台 版权所有 | 联系我们: service@eshop.com | 电话: 400-123-4567</p>
+        </div>
+    </footer>
+
+    <script>
+        // 美妆护肤数据
+        const cosmeticsProducts = [
+            {
+                id: 301,
+                name: '保湿面霜 深层补水 滋润修复 提亮肤色',
+                image: 'https://images.unsplash.com/photo-1556228578-9c360e1d8d34?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                price: 199,
+                originalPrice: 299,
+                category: 'skincare',
+                description: '保湿面霜，深层补水滋润。'
+            },
+            {
+                id: 302,
+                name: '口红 持久保湿 丝绒哑光 多色可选',
+                image: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                price: 89,
+                originalPrice: 129,
+                category: 'makeup',
+                description: '口红，持久保湿丝绒哑光。'
+            },
+            {
+                id: 303,
+                name: '精华液 抗衰老 提拉紧致 淡化细纹',
+                image: 'https://images.unsplash.com/photo-1591085686350-798c0f9faa7f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                price: 299,
+                originalPrice: 399,
+                category: 'skincare',
+                description: '精华液，抗衰老提拉紧致。'
+            },
+            {
+                id: 304,
+                name: '眼影盘 多色组合 易上色 持久不脱妆',
+                image: 'https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                price: 159,
+                originalPrice: 199,
+                category: 'makeup',
+                description: '眼影盘，多色组合易上色。'
+            },
+            {
+                id: 305,
+                name: '面膜 补水保湿 提亮肤色 收缩毛孔',
+                image: 'https://images.unsplash.com/photo-1556228578-9c360e1d8d34?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                price: 79,
+                originalPrice: 99,
+                category: 'skincare',
+                description: '面膜，补水保湿提亮肤色。'
+            },
+            {
+                id: 306,
+                name: '粉底液 遮瑕持久 轻薄透气 多色号可选',
+                image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                price: 189,
+                originalPrice: 259,
+                category: 'makeup',
+                description: '粉底液，遮瑕持久轻薄透气。'
+            },
+            {
+                id: 307,
+                name: '洁面乳 温和清洁 控油祛痘 不紧绷',
+                image: 'https://images.unsplash.com/photo-1556228578-9c360e1d8d34?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                price: 69,
+                originalPrice: 99,
+                category: 'skincare',
+                description: '洁面乳，温和清洁控油祛痘。'
+            },
+            {
+                id: 308,
+                name: '眉笔 易上色 防水防汗 自然持久',
+                image: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                price: 49,
+                originalPrice: 69,
+                category: 'makeup',
+                description: '眉笔，易上色防水防汗。'
+            }
+        ];
+        
+        // 渲染商品列表
+        function renderProducts(containerId, products) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.dataset.id = product.id;
+                
+                productCard.innerHTML = `
+                    <div class="product-image">
+                        <img src="${product.image}" alt="${product.name}">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">¥${product.price.toFixed(2)} <span>¥${product.originalPrice.toFixed(2)}</span></div>
+                        <button class="add-to-cart" data-id="${product.id}">加入购物车</button>
+                    </div>
+                `;
+                
+                productCard.addEventListener('click', (e) => {
+                    if (!e.target.classList.contains('add-to-cart')) {
+                        showProductDetail(product.id);
+                    }
+                });
+                
+                const addToCartBtn = productCard.querySelector('.add-to-cart');
+                addToCartBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    addToCart(product.id);
+                });
+                
+                container.appendChild(productCard);
+            });
+        }
+        
+        function showProductDetail(productId) {
+            const product = cosmeticsProducts.find(p => p.id === productId);
+            if (product) {
+                window.location.href = `product-detail.html?id=${product.id}`;
+            }
+        }
+        
+        function addToCart(productId) {
+            const product = cosmeticsProducts.find(p => p.id === productId);
+            if (!product) return;
+            
+            let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            const existingItemIndex = cartItems.findIndex(item => item.id === productId);
+            
+            if (existingItemIndex !== -1) {
+                cartItems[existingItemIndex].quantity += 1;
+            } else {
+                cartItems.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                    quantity: 1
+                });
+            }
+            
+            localStorage.setItem('cart', JSON.stringify(cartItems));
+            updateCartCount();
+            alert(`成功添加 "${product.name}" 到购物车！`);
+        }
+        
+        function updateCartCount() {
+            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
+            const cartCountElement = document.getElementById('cartCount');
+            if (cartCountElement) {
+                cartCountElement.textContent = totalItems;
+            }
+        }
+        
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (query) {
+                // 跳转到搜索页面并传递搜索关键词
+                window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+            } else {
+                alert('请输入搜索关键词');
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartCount();
+            
+            const hotProducts = cosmeticsProducts.slice(0, 5);
+            const skincareProducts = cosmeticsProducts.filter(p => p.category === 'skincare');
+            const makeupProducts = cosmeticsProducts.filter(p => p.category === 'makeup');
+            
+            renderProducts('hotProducts', hotProducts);
+            renderProducts('skincareProducts', skincareProducts);
+            renderProducts('makeupProducts', makeupProducts);
+            
+            document.getElementById('searchButton').addEventListener('click', performSearch);
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') performSearch();
+            });
+            
+            document.getElementById('userAvatar').addEventListener('click', function() {
+                const currentUser = localStorage.getItem('currentUser');
+                if (currentUser) {
+                    const user = JSON.parse(currentUser);
+                    alert(`欢迎 ${user.name || user.username}`);
+                } else {
+                    window.location.href = 'index.html#loginPage';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

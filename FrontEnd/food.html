@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>食品生鲜 - 在线电商平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="common.css">
+    <style>
+        /* 食品生鲜页面特有样式 */
+        .category-header {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .category-header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .category-header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        /* 商品样式 */
+        .product-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #333;
+            border-left: 4px solid #ff0036;
+            padding-left: 10px;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+        }
+        
+        .product-card {
+            border: 1px solid #eee;
+            border-radius: 6px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background-color: white;
+            cursor: pointer;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        }
+        
+        .product-image {
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+        
+        .product-info {
+            padding: 15px;
+        }
+        
+        .product-name {
+            font-size: 14px;
+            height: 40px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .product-price {
+            color: #ff0036;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .product-price span {
+            font-size: 14px;
+            color: #999;
+            text-decoration: line-through;
+            margin-left: 5px;
+        }
+        
+        .add-to-cart {
+            background-color: #ff0036;
+            color: white;
+            border: none;
+            padding: 8px 0;
+            width: 100%;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .add-to-cart:hover {
+            background-color: #e60031;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 1240px) {
+            .product-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .product-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="welcome-text">欢迎来到在线电商平台</div>
+            <div class="top-links">
+                <a href="index.html">登录</a>
+                <a href="index.html">注册</a>
+                <a href="cart.html">我的订单</a>
+                <a href="#">客户服务</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 主导航栏 -->
+    <header class="main-nav">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html" style="color: inherit; text-decoration: none;">
+                    <i class="fas fa-shopping-bag"></i>
+                    E-Shop
+                </a>
+            </div>
+            
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="搜索商品...">
+                <button id="searchButton"><i class="fas fa-search"></i></button>
+            </div>
+            
+            <div class="user-actions">
+                <a class="nav-link" href="index.html">
+                    <i class="fas fa-home"></i>
+                    <span>首页</span>
+                </a>
+                <a class="nav-link" href="cart.html">
+                    <div class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <div class="cart-count" id="cartCount">0</div>
+                    </div>
+                    <span>购物车</span>
+                </a>
+                <div class="user-avatar" id="userAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- 分类导航 -->
+    <nav class="category-nav">
+        <div class="container">
+            <ul class="category-list">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="electronics.html">电子产品</a></li>
+                <li><a href="clothing.html">服装服饰</a></li>
+                <li><a href="appliances.html">家用电器</a></li>
+                <li><a href="cosmetics.html">美妆护肤</a></li>
+                <li><a href="books.html">图书音像</a></li>
+                <li><a href="food.html" class="active">食品生鲜</a></li>
+                <li><a href="sports.html">运动户外</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- 分类页面头部 -->
+    <div class="category-header">
+        <div class="container">
+            <h1>食品生鲜</h1>
+            <p>新鲜美味，健康生活</p>
+        </div>
+    </div>
+    
+    <!-- 主要内容区域 -->
+    <div class="container main-content">
+        <!-- 促销横幅 -->
+        <div class="banner" style="margin-bottom: 30px; height: 300px; border-radius: 8px; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="食品生鲜促销" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        
+        <!-- 热门推荐 -->
+        <section class="product-section">
+            <h2 class="section-title">热门食品</h2>
+            <div class="product-grid" id="hotProducts"></div>
+        </section>
+        
+        <!-- 生鲜食品 -->
+        <section class="product-section">
+            <h2 class="section-title">生鲜食品</h2>
+            <div class="product-grid" id="freshFood"></div>
+        </section>
+        
+        <!-- 休闲零食 -->
+        <section class="product-section">
+            <h2 class="section-title">休闲零食</h2>
+            <div class="product-grid" id="snacks"></div>
+        </section>
+    </div>
+    
+    <!-- 页脚 -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>购物指南</h3>
+                <ul>
+                    <li><a href="#">购物流程</a></li>
+                    <li><a href="#">会员介绍</a></li>
+                    <li><a href="#">常见问题</a></li>
+                    <li><a href="#">联系客服</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>配送方式</h3>
+                <ul>
+                    <li><a href="#">上门自提</a></li>
+                    <li><a href="#">配送服务</a></li>
+                    <li><a href="#">配送费用</a></li>
+                    <li><a href="#">物流查询</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>支付方式</h3>
+                <ul>
+                    <li><a href="#">在线支付</a></li>
+                    <li><a href="#">货到付款</a></li>
+                    <li><a href="#">分期付款</a></li>
+                    <li><a href="#">礼品卡支付</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>售后服务</h3>
+                <ul>
+                    <li><a href="#">退换货政策</a></li>
+                    <li><a href="#">退款说明</a></li>
+                    <li><a href="#">保修政策</a></li>
+                    <li><a href="#">投诉建议</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>© 2023 在线电商平台 版权所有 | 联系我们: service@eshop.com | 电话: 400-123-4567</p>
+        </div>
+    </footer>
+
+    <script>
+        // 食品生鲜数据
+        const foodProducts = [
+            {
+                id: 501,
+                name: '新鲜水果礼盒 精选当季水果 健康美味',
+                image: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                price: 99,
+                originalPrice: 129,
+                category: 'fresh',
+                description: '新鲜水果礼盒，精选当季水果。'
+            },
+            {
+                id: 502,
+                name: '有机蔬菜 新鲜采摘 无农药残留',
+                image: 'https://images.unsplash.com/photo-1540420828642-fca2c5c18abb?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                price: 29,
+                originalPrice: 39,
+                category: 'fresh',
+                description: '有机蔬菜，新鲜采摘。'
+            },
+            {
+                id: 503,
+                name: '精选牛肉 优质部位 新鲜冷冻',
+                image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                price: 89,
+                originalPrice: 119,
+                category: 'fresh',
+                description: '精选牛肉，优质部位。'
+            },
+            {
+                id: 504,
+                name: '进口零食大礼包 多种口味 休闲必备',
+                image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                price: 79,
+                originalPrice: 99,
+                category: 'snacks',
+                description: '进口零食大礼包，多种口味。'
+            },
+            {
+                id: 505,
+                name: '新鲜鸡蛋 农家散养 营养丰富',
+                image: 'https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                price: 25,
+                originalPrice: 35,
+                category: 'fresh',
+                description: '新鲜鸡蛋，农家散养。'
+            },
+            {
+                id: 506,
+                name: '巧克力礼盒 多种口味 精美包装',
+                image: 'https://images.unsplash.com/photo-1511381939415-e44015466834?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                price: 129,
+                originalPrice: 169,
+                category: 'snacks',
+                description: '巧克力礼盒，多种口味。'
+            },
+            {
+                id: 507,
+                name: '新鲜牛奶 牧场直供 当日生产',
+                image: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                price: 19,
+                originalPrice: 29,
+                category: 'fresh',
+                description: '新鲜牛奶，牧场直供。'
+            },
+            {
+                id: 508,
+                name: '薯片组合装 多种口味 休闲零食',
+                image: 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                price: 39,
+                originalPrice: 49,
+                category: 'snacks',
+                description: '薯片组合装，多种口味。'
+            }
+        ];
+        
+        // 渲染商品列表
+        function renderProducts(containerId, products) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.dataset.id = product.id;
+                
+                productCard.innerHTML = `
+                    <div class="product-image">
+                        <img src="${product.image}" alt="${product.name}">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">¥${product.price.toFixed(2)} <span>¥${product.originalPrice.toFixed(2)}</span></div>
+                        <button class="add-to-cart" data-id="${product.id}">加入购物车</button>
+                    </div>
+                `;
+                
+                productCard.addEventListener('click', (e) => {
+                    if (!e.target.classList.contains('add-to-cart')) {
+                        showProductDetail(product.id);
+                    }
+                });
+                
+                const addToCartBtn = productCard.querySelector('.add-to-cart');
+                addToCartBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    addToCart(product.id);
+                });
+                
+                container.appendChild(productCard);
+            });
+        }
+        
+        function showProductDetail(productId) {
+            const product = foodProducts.find(p => p.id === productId);
+            if (product) {
+                window.location.href = `product-detail.html?id=${product.id}`;
+            }
+        }
+        
+        function addToCart(productId) {
+            const product = foodProducts.find(p => p.id === productId);
+            if (!product) return;
+            
+            let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            const existingItemIndex = cartItems.findIndex(item => item.id === productId);
+            
+            if (existingItemIndex !== -1) {
+                cartItems[existingItemIndex].quantity += 1;
+            } else {
+                cartItems.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                    quantity: 1
+                });
+            }
+            
+            localStorage.setItem('cart', JSON.stringify(cartItems));
+            updateCartCount();
+            alert(`成功添加 "${product.name}" 到购物车！`);
+        }
+        
+        function updateCartCount() {
+            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
+            const cartCountElement = document.getElementById('cartCount');
+            if (cartCountElement) {
+                cartCountElement.textContent = totalItems;
+            }
+        }
+        
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (query) {
+                // 跳转到搜索页面并传递搜索关键词
+                window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+            } else {
+                alert('请输入搜索关键词');
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartCount();
+            
+            const hotProducts = foodProducts.slice(0, 5);
+            const freshFood = foodProducts.filter(p => p.category === 'fresh');
+            const snacks = foodProducts.filter(p => p.category === 'snacks');
+            
+            renderProducts('hotProducts', hotProducts);
+            renderProducts('freshFood', freshFood);
+            renderProducts('snacks', snacks);
+            
+            document.getElementById('searchButton').addEventListener('click', performSearch);
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') performSearch();
+            });
+            
+            document.getElementById('userAvatar').addEventListener('click', function() {
+                const currentUser = localStorage.getItem('currentUser');
+                if (currentUser) {
+                    const user = JSON.parse(currentUser);
+                    alert(`欢迎 ${user.name || user.username}`);
+                } else {
+                    window.location.href = 'index.html#loginPage';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

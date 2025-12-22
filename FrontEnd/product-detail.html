@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品详情 - 在线电商平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="common.css">
+    <style>
+.main-content {
+            min-height: 600px;
+            background-color: white;
+            margin: 20px auto;
+            width: 1200px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 30px;
+            display: flex;
+            gap: 30px;
+        }
+
+        /* 商品图片区 - 和 index2 一致 */
+        .product-gallery {
+            flex: 1;
+        }
+        
+        .main-image {
+            width: 100%;
+            height: 500px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+            background-color: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .main-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .thumbnail-list {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        
+        .thumbnail-item {
+            width: 80px;
+            height: 80px;
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            background-color: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .thumbnail-item.active {
+            border-color: #ff0036;
+        }
+        
+        .thumbnail-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* 商品信息区 - 和 index2 一致 */
+        .product-info {
+            flex: 1.5;
+        }
+        
+        .product-name {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .product-price-section {
+            background-color: #fff5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .price-label {
+            font-size: 16px;
+            color: #999;
+            margin-bottom: 10px;
+        }
+        
+        .product-price {
+            font-size: 36px;
+            color: #ff0036;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: baseline;
+        }
+        
+        .product-price span {
+            font-size: 18px;
+        }
+        
+        .original-price {
+            font-size: 16px;
+            color: #999;
+            text-decoration: line-through;
+            margin-left: 15px;
+            font-weight: normal;
+        }
+        
+        .product-stock {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .stock-label {
+            color: #00cc66;
+            font-weight: 500;
+        }
+
+        /* 规格选择 - 和 index2 一致 */
+        .product-specs {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .spec-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .spec-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .spec-option {
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .spec-option:hover {
+            border-color: #ff0036;
+        }
+        
+        .spec-option.active {
+            background-color: #fff5f5;
+            border-color: #ff0036;
+            color: #ff0036;
+            font-weight: 500;
+        }
+
+        /* 数量选择 - 和 index2 一致 */
+        .product-quantity {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .quantity-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .quantity-control {
+            display: flex;
+            align-items: center;
+        }
+        
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            color: #666;
+        }
+        
+        .quantity-btn:hover {
+            background-color: #eee;
+        }
+        
+        .quantity-input {
+            width: 80px;
+            height: 40px;
+            border: 1px solid #ddd;
+            border-left: none;
+            border-right: none;
+            text-align: center;
+            font-size: 18px;
+        }
+        
+        .quantity-input:focus {
+            outline: none;
+            border-color: #ff0036;
+        }
+
+        /* 操作按钮 - 和 index2 一致 */
+        .product-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn-add-cart {
+            flex: 1;
+            background-color: #ff0036;
+            color: white;
+            border: none;
+            padding: 15px 0;
+            border-radius: 4px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-add-cart i {
+            margin-right: 10px;
+        }
+        
+        .btn-add-cart:hover {
+            background-color: #e60031;
+        }
+        
+        .btn-buy-now {
+            flex: 1;
+            background-color: #ff9900;
+            color: white;
+            border: none;
+            padding: 15px 0;
+            border-radius: 4px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-buy-now i {
+            margin-right: 10px;
+        }
+        
+        .btn-buy-now:hover {
+            background-color: #e68a00;
+        }
+
+        /* 商品标签页 - 和 index2 一致 */
+        .product-tabs {
+            width: 1200px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        
+        .tabs-header {
+            display: flex;
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .tab-item {
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab-item.active {
+            border-bottom-color: #ff0036;
+            color: #ff0036;
+            font-weight: 500;
+        }
+        
+        .tabs-content {
+            padding: 30px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .product-description {
+            line-height: 1.8;
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .product-description img {
+            max-width: 100%;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .spec-table th, .spec-table td {
+            border: 1px solid #eee;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .spec-table th {
+            background-color: #f9f9f9;
+            font-weight: 500;
+            color: #333;
+        }
+
+        /* 相关推荐 - 和 index2 一致 */
+        .related-products {
+            width: 1200px;
+            margin: 20px auto 40px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 30px;
+        }
+        
+        .section-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #333;
+            border-left: 4px solid #ff0036;
+            padding-left: 10px;
+        }
+        
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        
+        .related-card {
+            border: 1px solid #eee;
+            border-radius: 6px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .related-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        }
+        
+        .related-image {
+            height: 200px;
+            overflow: hidden;
+            background-color: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .related-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.5s ease;
+        }
+        
+        .related-card:hover .related-image img {
+            transform: scale(1.05);
+        }
+        
+        .related-info {
+            padding: 15px;
+        }
+        
+        .related-name {
+            font-size: 14px;
+            height: 40px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .related-price {
+            color: #ff0036;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* 页脚 - 和 index2 完全一致 */
+
+@media (max-width: 1240px) {
+    .product-tabs, .related-products {
+        width: 95%;
+    }
+
+    .related-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .main-content {
+        flex-direction: column;
+    }
+
+    .main-image {
+        height: 400px;
+    }
+
+    .related-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .product-actions {
+        flex-direction: column;
+    }
+
+    .main-image {
+        height: 300px;
+    }
+}
+
+@media (max-width: 576px) {
+    .related-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .product-name {
+        font-size: 24px;
+    }
+
+    .product-price {
+        font-size: 28px;
+    }
+
+    .main-image {
+        height: 250px;
+    }
+}
+
+.image-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+        }
+        
+        .image-placeholder i {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+        
+        /* 加载动画 */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+        }
+        
+        .loading::after {
+            content: "";
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #ff0036;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 - 和 index2 完全一致 -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="welcome-text">欢迎来到在线电商平台</div>
+            <div class="top-links">
+                <a href="login.html">登录</a>
+                <a href="register.html">注册</a>
+                <a href="orders.html">我的订单</a>
+                <a>客户服务</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 主导航栏 - 和 index2 完全一致 -->
+    <header class="main-nav">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-shopping-bag"></i>
+                E-Shop
+            </a>
+            
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="搜索商品...">
+                <button id="searchButton"><i class="fas fa-search"></i></button>
+            </div>
+            
+            <div class="user-actions">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>首页</span>
+                </a>
+                <a href="cart.html" class="nav-link">
+                    <div class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <div class="cart-count" id="cartCount">0</div>
+                    </div>
+                    <span>购物车</span>
+                </a>
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- 分类导航 - 和 index2 完全一致 -->
+    <nav class="category-nav">
+    <div class="container">
+        <ul class="category-list">
+            <li><a href="index.html">首页</a></li>
+            <li><a href="electronics.html">电子产品</a></li>
+            <li><a href="clothing.html">服装服饰</a></li>
+            <li><a href="appliances.html">家用电器</a></li>
+            <li><a href="cosmetics.html">美妆护肤</a></li>
+            <li><a href="books.html">图书音像</a></li>
+            <li><a href="food.html">食品生鲜</a></li>
+            <li><a href="sports.html">运动户外</a></li>
+        </ul>
+    </div>
+</nav>
+    
+    <!-- 商品详情主区域 - 和 index2 布局一致 -->
+    <div class="main-content">
+        <!-- 商品图片区 -->
+        <div class="product-gallery">
+            <div class="main-image">
+                <div class="loading"></div>
+            </div>
+            <div class="thumbnail-list" id="thumbnailList">
+                <!-- 缩略图动态生成 -->
+            </div>
+        </div>
+        
+        <!-- 商品信息区 -->
+        <div class="product-info">
+            <h1 class="product-name" id="productName">加载中...</h1>
+            
+            <div class="product-price-section">
+                <div class="price-label">售价</div>
+                <div class="product-price">
+                    ¥<span id="productPrice">0.00</span>
+                    <span class="original-price" id="originalPrice">¥0.00</span>
+                </div>
+            </div>
+            
+            <div class="product-stock">
+                库存：<span class="stock-label" id="productStock">有货</span>
+            </div>
+            
+            <!-- 规格选择 -->
+            <div class="product-specs">
+                <div class="spec-title">选择规格</div>
+                <div class="spec-options" id="specOptions">
+                    <!-- 规格选项动态生成 -->
+                </div>
+            </div>
+            
+            <!-- 数量选择 -->
+            <div class="product-quantity">
+                <div class="quantity-title">购买数量</div>
+                <div class="quantity-control">
+                    <button class="quantity-btn minus" id="minusBtn">-</button>
+                    <input type="number" class="quantity-input" id="quantityInput" value="1" min="1">
+                    <button class="quantity-btn plus" id="plusBtn">+</button>
+                </div>
+            </div>
+            
+            <!-- 操作按钮 -->
+            <div class="product-actions">
+                <button class="btn-add-cart" id="addToCartBtn">
+                    <i class="fas fa-shopping-cart"></i> 加入购物车
+                </button>
+                <button class="btn-buy-now" id="buyNowBtn">
+                    <i class="fas fa-bolt"></i> 立即购买
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 商品标签页 - 和 index2 一致 -->
+    <div class="product-tabs">
+        <div class="tabs-header">
+            <div class="tab-item active" data-tab="description">商品详情</div>
+            <div class="tab-item" data-tab="specification">规格参数</div>
+            <div class="tab-item" data-tab="reviews">用户评价</div>
+        </div>
+        <div class="tabs-content">
+            <div class="tab-content active" id="descriptionTab">
+                <div class="product-description" id="productDescription">
+                    加载中...
+                </div>
+            </div>
+            <div class="tab-content" id="specificationTab">
+                <table class="spec-table" id="specTable">
+                    <!-- 规格参数动态生成 -->
+                </table>
+            </div>
+            <div class="tab-content" id="reviewsTab">
+                <div class="product-description">
+                    <p>暂无用户评价</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 相关推荐 - 和 index2 一致 -->
+    <div class="related-products">
+        <div class="section-title">猜你喜欢</div>
+        <div class="related-grid" id="relatedGrid">
+            <!-- 推荐商品动态生成 -->
+        </div>
+    </div>
+    
+    <!-- 页脚 - 和 index2 完全一致 -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>购物指南</h3>
+                <ul>
+                    <li><a>购物流程</a></li>
+                    <li><a>会员介绍</a></li>
+                    <li><a>常见问题</a></li>
+                    <li><a>联系客服</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>配送方式</h3>
+                <ul>
+                    <li><a>上门自提</a></li>
+                    <li><a>配送服务</a></li>
+                    <li><a>配送费用</a></li>
+                    <li><a>物流查询</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>支付方式</h3>
+                <ul>
+                    <li><a>在线支付</a></li>
+                    <li><a>货到付款</a></li>
+                    <li><a>分期付款</a></li>
+                    <li><a>礼品卡支付</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>售后服务</h3>
+                <ul>
+                    <li><a>退换货政策</a></li>
+                    <li><a>退款说明</a></li>
+                    <li><a>保修政策</a></li>
+                    <li><a>投诉建议</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>© 2023 在线电商平台 版权所有 | 联系我们: service@eshop.com | 电话: 400-123-4567</p>
+        </div>
+    </footer>
+
+    <script>
+        // 商品数据 - 与 index2.html 保持一致（使用数字ID）
+        const products = [
+            {
+                id: 1,
+                name: "Apple iPhone 15 Pro 256GB 原色钛金属",
+                price: 8999,
+                originalPrice: 9999,
+                image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                images: [
+                    "https://images.unsplash.com/photo-1695048133142-1a20484d2569?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1695048133024-d6c53407bd5d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                ],
+                category: "electronics",
+                stock: 100,
+                specs: [
+                    { id: "1-1", name: "256GB 原色钛金属", price: 8999 },
+                    { id: "1-2", name: "256GB 蓝色钛金属", price: 8999 },
+                    { id: "1-3", name: "512GB 原色钛金属", price: 10999 }
+                ],
+                description: `<h3>iPhone 15 Pro 亮点</h3><p>iPhone 15 Pro 采用钛金属边框，更轻更坚固。搭载 A17 Pro 芯片，性能飞跃，支持 USB-C 接口，传输速度更快。</p><img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="iPhone 15 Pro 详情图"><h4>核心参数</h4><ul><li>处理器：A17 Pro 仿生芯片</li><li>显示屏：6.1 英寸 Super Retina XDR 显示屏</li><li>摄像头：4800 万像素主摄 + 1200 万像素超广角 + 1200 万像素长焦</li><li>电池：最长续航 23 小时</li><li>防水：IP68 级别</li></ul>`,
+                specifications: [
+                    { name: "品牌", value: "苹果 (Apple)" },
+                    { name: "型号", value: "iPhone 15 Pro" },
+                    { name: "上市时间", value: "2023年" },
+                    { name: "操作系统", value: "iOS 17" },
+                    { name: "CPU", value: "A17 Pro" },
+                    { name: "屏幕尺寸", value: "6.1 英寸" },
+                    { name: "分辨率", value: "2556 x 1179 像素" },
+                    { name: "电池容量", value: "3300mAh 左右" },
+                    { name: "机身材质", value: "钛金属边框 + 玻璃后盖" },
+                    { name: "重量", value: "187 克" }
+                ],
+                related: [2, 3, 5, 7]
+            },
+            {
+                id: 2,
+                name: "华为 Mate 60 Pro 12GB+512GB 雅川青",
+                price: 6999,
+                originalPrice: 7999,
+                image: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                images: [
+                    "https://images.unsplash.com/photo-1598327105666-5b89351aff97?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                ],
+                category: "electronics",
+                stock: 500,
+                specs: [
+                    { id: "2-1", name: "12GB+256GB 雅川青", price: 6499 },
+                    { id: "2-2", name: "12GB+512GB 雅川青", price: 6999 },
+                    { id: "2-3", name: "12GB+1TB 白沙银", price: 7999 }
+                ],
+                description: `<h3>华为 Mate 60 Pro 亮点</h3><p>华为 Mate 60 Pro 搭载麒麟 9010 芯片，支持卫星通话，超光变 XMAGE 影像系统，鸿蒙 4.0 系统。</p><img src="https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="华为 Mate 60 Pro 详情图"><h4>核心参数</h4><ul><li>处理器：麒麟 9010 芯片</li><li>显示屏：6.8 英寸 OLED 曲面屏</li><li>摄像头：5000 万像素超光变主摄 + 4000 万像素超广角 + 4800 万像素长焦</li><li>电池：5000mAh</li><li>充电：88W 有线快充 + 50W 无线快充</li></ul>`,
+                specifications: [
+                    { name: "品牌", value: "华为 (HUAWEI)" },
+                    { name: "型号", value: "Mate 60 Pro" },
+                    { name: "上市时间", value: "2023年" },
+                    { name: "操作系统", value: "HarmonyOS 4.0" },
+                    { name: "CPU", value: "麒麟 9010" },
+                    { name: "屏幕尺寸", value: "6.8 英寸" },
+                    { name: "分辨率", value: "2720 x 1260 像素" },
+                    { name: "电池容量", value: "5000mAh" },
+                    { name: "机身材质", value: "玻璃后盖 + 金属中框" },
+                    { name: "重量", value: "226 克" }
+                ],
+                related: [1, 3, 5, 6]
+            },
+            {
+                id: 3,
+                name: '数码单反相机 高清4K视频拍摄 专业级摄影器材',
+                price: 4599,
+                originalPrice: 5999,
+                image: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                images: [
+                    'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                    'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+                ],
+                category: 'electronics',
+                stock: 50,
+                specs: [
+                    { id: "3-1", name: "标准套装", price: 4599 },
+                    { id: "3-2", name: "专业套装（含镜头）", price: 7999 }
+                ],
+                description: `<h3>专业级数码单反相机</h3><p>适合摄影爱好者和专业人士，提供高清4K视频拍摄能力，画质卓越。</p><img src="https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="数码单反相机"><h4>核心功能</h4><ul><li>2420万像素全画幅CMOS传感器</li><li>支持4K/30p视频录制</li><li>ISO范围：100-51200</li><li>51点自动对焦系统</li><li>防尘防滴设计</li></ul>`,
+                specifications: [
+                    { name: "品牌", value: "Canon" },
+                    { name: "型号", value: "EOS R6 Mark II" },
+                    { name: "传感器类型", value: "全画幅CMOS" },
+                    { name: "有效像素", value: "2420万像素" },
+                    { name: "视频拍摄", value: "4K/60p" },
+                    { name: "ISO范围", value: "100-102400" },
+                    { name: "连拍速度", value: "12张/秒" },
+                    { name: "显示屏", value: "3.0英寸翻转触摸屏" },
+                    { name: "存储介质", value: "SD/SDHC/SDXC卡" },
+                    { name: "电池", value: "LP-E6NH锂电池" }
+                ],
+                related: [1, 2, 4, 7]
+            },
+            {
+                id: 4,
+                name: '男士运动跑步鞋 透气减震 轻便耐磨 多色可选',
+                price: 289,
+                originalPrice: 399,
+                image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                images: [
+                    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                    'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+                ],
+                category: 'clothing',
+                stock: 200,
+                specs: [
+                    { id: "4-1", name: "黑色 42码", price: 289 },
+                    { id: "4-2", name: "白色 42码", price: 289 },
+                    { id: "4-3", name: "蓝色 42码", price: 289 }
+                ],
+                description: `<h3>舒适的运动跑步鞋</h3><p>采用透气网面材料，提供优秀的减震效果，适合日常运动和健身。</p><img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="运动鞋"><h4>产品特点</h4><ul><li>透气网面鞋面，保持足部干爽</li><li>高弹力中底，提供优秀减震</li><li>耐磨橡胶大底，抓地力强</li><li>轻量化设计，单只仅重280克</li><li>多色可选，满足不同喜好</li></ul>`,
+                specifications: [
+                    { name: "品牌", value: "Nike" },
+                    { name: "型号", value: "Air Zoom Pegasus 39" },
+                    { name: "适用场景", value: "跑步/训练/日常" },
+                    { name: "鞋面材质", value: "工程网布" },
+                    { name: "中底技术", value: "React泡棉" },
+                    { name: "外底材质", value: "耐磨橡胶" },
+                    { name: "重量", value: "280克/只（42码）" },
+                    { name: "适用性别", value: "男士" },
+                    { name: "尺码范围", value: "39-46码" },
+                    { name: "颜色", value: "黑/白/蓝" }
+                ],
+                related: [5, 6, 7, 8]
+            },
+            {
+                id: 5,
+                name: '轻薄笔记本电脑 高性能处理器 超长续航 便携办公',
+                price: 5999,
+                originalPrice: 6999,
+                image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                images: [
+                    'https://images.unsplash.com/photo-1576566588028-4147f3842f27?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                    'https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+                ],
+                category: 'electronics',
+                stock: 80,
+                specs: [
+                    { id: "5-1", name: "i5/16GB/512GB", price: 5999 },
+                    { id: "5-2", name: "i7/16GB/1TB", price: 7999 }
+                ],
+                description: `<h3>轻薄便携的笔记本电脑</h3><p>适合商务人士和学生，搭载高性能处理器，超长续航时间。</p><img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="笔记本电脑"><h4>配置亮点</h4><ul><li>第12代英特尔酷睿i5处理器</li><li>16GB LPDDR5内存，512GB NVMe SSD</li><li>14英寸2.8K OLED显示屏</li><li>续航时间最长15小时</li><li>重量仅1.3kg，厚度15.9mm</li></ul>`,
+                specifications: [
+                    { name: "品牌", value: "Lenovo" },
+                    { name: "型号", value: "ThinkPad X1 Carbon" },
+                    { name: "处理器", value: "Intel Core i5-1240P" },
+                    { name: "内存", value: "16GB LPDDR5" },
+                    { name: "硬盘", value: "512GB NVMe SSD" },
+                    { name: "屏幕尺寸", value: "14英寸" },
+                    { name: "分辨率", value: "2880×1800" },
+                    { name: "显卡", value: "Intel Iris Xe" },
+                    { name: "电池", value: "57Wh" },
+                    { name: "重量", value: "1.12kg" }
+                ],
+                related: [1, 2, 3, 6]
+            }
+        ];
+
+        // 全局变量
+        let currentProduct = null;
+        let selectedSpec = null;
+        let selectedQuantity = 1;
+
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 获取URL中的商品ID
+            const params = new URLSearchParams(window.location.search);
+            let productId = params.get('id');
+            
+            // 校验商品ID
+            if (!productId) {
+                // 如果没有ID参数，默认显示第一个商品
+                productId = 1;
+            }
+            
+            // 将ID转换为数字（因为我们的产品ID都是数字）
+            productId = parseInt(productId);
+            
+            // 查找商品
+            currentProduct = products.find(p => p.id === productId);
+            if (!currentProduct) {
+                showError('该商品不存在，请返回首页重新选择');
+                return;
+            }
+            
+            // 渲染页面
+            renderProduct();
+            bindEvents();
+            updateCartCount();
+            
+            // 页面标题
+            document.title = `${currentProduct.name} - 在线电商平台`;
+        });
+
+        // 显示错误提示
+        function showError(msg) {
+            document.querySelector('.main-content').innerHTML = `
+                <div style="width:100%; text-align:center; padding:80px 0;">
+                    <i class="fas fa-exclamation-triangle" style="font-size:60px; color:#ff9900; margin-bottom:20px;"></i>
+                    <h2 style="color:#666; margin-bottom:30px;">${msg}</h2>
+                    <button onclick="window.location.href='index.html'" style="padding:12px 40px; background:#ff0036; color:white; border:none; border-radius:4px; font-size:16px; cursor:pointer;">返回首页</button>
+                </div>
+            `;
+        }
+
+        // 渲染商品信息
+        function renderProduct() {
+            // 1. 基础信息
+            document.getElementById('productName').textContent = currentProduct.name;
+            document.getElementById('productPrice').textContent = currentProduct.price.toFixed(2);
+            document.getElementById('originalPrice').textContent = currentProduct.originalPrice.toFixed(2);
+            document.getElementById('productStock').textContent = currentProduct.stock > 0 ? `有货（剩余${currentProduct.stock}件）` : '无货';
+            
+            // 2. 商品图片
+            const mainImageContainer = document.querySelector('.main-image');
+            const mainImage = new Image();
+            mainImage.src = currentProduct.image;
+            mainImage.alt = currentProduct.name;
+            mainImage.onload = function() {
+                mainImageContainer.innerHTML = '';
+                mainImageContainer.appendChild(mainImage);
+            };
+            mainImage.onerror = function() {
+                mainImageContainer.innerHTML = `
+                    <div class="image-placeholder">
+                        <i class="fas fa-image"></i>
+                        <div>图片加载失败</div>
+                    </div>
+                `;
+            };
+            
+            // 缩略图
+            const thumbnailList = document.getElementById('thumbnailList');
+            const images = currentProduct.images || [currentProduct.image];
+            thumbnailList.innerHTML = images.map((img, idx) => {
+                const thumbnail = new Image();
+                thumbnail.src = img;
+                thumbnail.alt = `${currentProduct.name}图片${idx+1}`;
+                
+                return `
+                    <div class="thumbnail-item ${idx===0?'active':''}" data-img="${img}" data-index="${idx}">
+                        ${img ? `<img src="${img}" alt="${currentProduct.name}图片${idx+1}">` : 
+                        '<div class="image-placeholder"><i class="fas fa-image"></i></div>'}
+                    </div>
+                `;
+            }).join('');
+            
+            // 3. 规格选项
+            const specOptions = document.getElementById('specOptions');
+            if (currentProduct.specs && currentProduct.specs.length > 0) {
+                selectedSpec = currentProduct.specs[0];
+                specOptions.innerHTML = currentProduct.specs.map((spec, idx) => `
+                    <div class="spec-option ${idx===0?'active':''}" data-id="${spec.id}" data-price="${spec.price}">
+                        ${spec.name}
+                    </div>
+                `).join('');
+            } else {
+                specOptions.innerHTML = '<div class="spec-option active">默认规格</div>';
+                selectedSpec = { price: currentProduct.price, name: '默认规格' };
+            }
+            
+            // 4. 商品详情
+            document.getElementById('productDescription').innerHTML = currentProduct.description || '<p>暂无商品详情</p>';
+            
+            // 5. 规格参数
+            const specTable = document.getElementById('specTable');
+            if (currentProduct.specifications && currentProduct.specifications.length > 0) {
+                specTable.innerHTML = currentProduct.specifications.map(spec => `
+                    <tr>
+                        <th>${spec.name}</th>
+                        <td>${spec.value}</td>
+                    </tr>
+                `).join('');
+            } else {
+                specTable.innerHTML = '<tr><td colspan="2" style="text-align:center; padding:20px;">暂无规格参数</td></tr>';
+            }
+            
+            // 6. 相关推荐
+            const relatedGrid = document.getElementById('relatedGrid');
+            const relatedIds = currentProduct.related || [];
+            
+            if (relatedIds.length > 0) {
+                const relatedProducts = products.filter(p => relatedIds.includes(p.id));
+                relatedGrid.innerHTML = relatedProducts.map(product => `
+                    <div class="related-card" onclick="window.location.href='product-detail.html?id=${product.id}'">
+                        <div class="related-image">
+                            <img src="${product.image}" alt="${product.name}" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"100\"><rect width=\"100%\" height=\"100%\" fill=\"%23f5f5f5\"/><text x=\"50%\" y=\"50%\" font-family=\"Arial\" font-size=\"14\" fill=\"%23999\" text-anchor=\"middle\" dy=\".3em\">图片</text></svg>'">
+                        </div>
+                        <div class="related-info">
+                            <div class="related-name">${product.name}</div>
+                            <div class="related-price">¥${product.price.toFixed(2)}</div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                relatedGrid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:30px; color:#999;">暂无推荐商品</div>';
+            }
+        }
+
+        // 绑定事件
+        function bindEvents() {
+            // 1. 缩略图切换
+            document.querySelectorAll('.thumbnail-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.thumbnail-item').forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    
+                    const imgUrl = item.dataset.img;
+                    const mainImageContainer = document.querySelector('.main-image');
+                    const newImage = new Image();
+                    newImage.src = imgUrl;
+                    newImage.alt = currentProduct.name;
+                    newImage.onload = function() {
+                        mainImageContainer.innerHTML = '';
+                        mainImageContainer.appendChild(newImage);
+                    };
+                    newImage.onerror = function() {
+                        mainImageContainer.innerHTML = `
+                            <div class="image-placeholder">
+                                <i class="fas fa-image"></i>
+                                <div>图片加载失败</div>
+                            </div>
+                        `;
+                    };
+                });
+            });
+            
+            // 2. 规格选择
+            document.querySelectorAll('.spec-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelectorAll('.spec-option').forEach(o => o.classList.remove('active'));
+                    option.classList.add('active');
+                    
+                    if (option.dataset.price) {
+                        const newPrice = parseFloat(option.dataset.price);
+                        document.getElementById('productPrice').textContent = newPrice.toFixed(2);
+                        selectedSpec = { 
+                            id: option.dataset.id, 
+                            price: newPrice, 
+                            name: option.textContent 
+                        };
+                    }
+                });
+            });
+            
+            // 3. 数量控制
+            document.getElementById('minusBtn').addEventListener('click', () => {
+                if (selectedQuantity > 1) {
+                    selectedQuantity--;
+                    document.getElementById('quantityInput').value = selectedQuantity;
+                }
+            });
+            
+            document.getElementById('plusBtn').addEventListener('click', () => {
+                if (selectedQuantity < currentProduct.stock) {
+                    selectedQuantity++;
+                    document.getElementById('quantityInput').value = selectedQuantity;
+                } else {
+                    alert('已达库存上限');
+                }
+            });
+            
+            document.getElementById('quantityInput').addEventListener('change', () => {
+                let val = parseInt(document.getElementById('quantityInput').value) || 1;
+                if (val < 1) val = 1;
+                if (val > currentProduct.stock) val = currentProduct.stock;
+                selectedQuantity = val;
+                document.getElementById('quantityInput').value = val;
+            });
+            
+            // 4. 标签页切换
+            document.querySelectorAll('.tab-item').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(`${tab.dataset.tab}Tab`).classList.add('active');
+                });
+            });
+            
+            // 5. 加入购物车
+            document.getElementById('addToCartBtn').addEventListener('click', () => {
+                if (currentProduct.stock <= 0) {
+                    alert('该商品已售罄');
+                    return;
+                }
+                
+                const cartItem = {
+                    id: currentProduct.id,
+                    name: currentProduct.name,
+                    image: currentProduct.image,
+                    price: selectedSpec ? selectedSpec.price : currentProduct.price,
+                    spec: selectedSpec ? selectedSpec.name : '默认规格',
+                    quantity: selectedQuantity,
+                    selected: true
+                };
+                
+                let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                const existIdx = cart.findIndex(item => item.id === cartItem.id && item.spec === cartItem.spec);
+                
+                if (existIdx > -1) {
+                    cart[existIdx].quantity += selectedQuantity;
+                    if (cart[existIdx].quantity > currentProduct.stock) {
+                        cart[existIdx].quantity = currentProduct.stock;
+                        alert(`购物车数量已调整为库存上限：${currentProduct.stock}件`);
+                    }
+                } else {
+                    cart.push(cartItem);
+                }
+                
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
+                alert('商品已成功加入购物车！');
+            });
+            
+            // 6. 立即购买
+            document.getElementById('buyNowBtn').addEventListener('click', () => {
+                if (currentProduct.stock <= 0) {
+                    alert('该商品已售罄');
+                    return;
+                }
+                
+                const cartItem = {
+                    id: currentProduct.id,
+                    name: currentProduct.name,
+                    image: currentProduct.image,
+                    price: selectedSpec ? selectedSpec.price : currentProduct.price,
+                    spec: selectedSpec ? selectedSpec.name : '默认规格',
+                    quantity: selectedQuantity,
+                    selected: true
+                };
+                
+                let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                const existIdx = cart.findIndex(item => item.id === cartItem.id && item.spec === cartItem.spec);
+                
+                if (existIdx > -1) {
+                    cart[existIdx].quantity = selectedQuantity;
+                } else {
+                    cart.push(cartItem);
+                }
+                
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
+                window.location.href = 'cart.html';
+            });
+            
+            // 7. 搜索功能
+            document.getElementById('searchButton').addEventListener('click', () => {
+            const keyword = document.getElementById('searchInput').value.trim();
+            if (keyword) {
+                // 跳转到搜索页面
+                window.location.href = `search.html?q=${encodeURIComponent(keyword)}`;
+            } else {
+                alert('请输入搜索关键词');
+            }
+        });
+
+document.getElementById('searchInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        const keyword = document.getElementById('searchInput').value.trim();
+        if (keyword) {
+            // 跳转到搜索页面
+            window.location.href = `search.html?q=${encodeURIComponent(keyword)}`;
+        } else {
+            alert('请输入搜索关键词');
+        }
+    }
+});
+            
+        }
+
+        // 更新购物车数量
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const total = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = total;
+        }
+    </script>
+</body>
+</html>
