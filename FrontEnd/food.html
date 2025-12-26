@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>食品生鲜 - 在线电商平台</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="common.css">
+        <link rel="stylesheet" href="assets/css/common.css">
     <style>
         /* 食品生鲜页面特有样式 */
         .category-header {
@@ -219,7 +218,7 @@
     <div class="container main-content">
         <!-- 促销横幅 -->
         <div class="banner" style="margin-bottom: 30px; height: 300px; border-radius: 8px; overflow: hidden;">
-            <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="食品生鲜促销" style="width: 100%; height: 100%; object-fit: cover;">
+            <img src="assets/img/products/961408df53f4f20fa053300d50802e1e.jpg" alt="食品生鲜促销" style="width: 100%; height: 100%; object-fit: cover;">
         </div>
         
         <!-- 热门推荐 -->
@@ -290,13 +289,14 @@
         </div>
     </footer>
 
+    <script src="assets/js/shared-data.js"></script>
     <script>
         // 食品生鲜数据
         const foodProducts = [
             {
                 id: 501,
                 name: '新鲜水果礼盒 精选当季水果 健康美味',
-                image: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/501b6dc694158ec09652299cae084e69.jpg',
                 price: 99,
                 originalPrice: 129,
                 category: 'fresh',
@@ -305,7 +305,7 @@
             {
                 id: 502,
                 name: '有机蔬菜 新鲜采摘 无农药残留',
-                image: 'https://images.unsplash.com/photo-1540420828642-fca2c5c18abb?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/yjsc.webp',
                 price: 29,
                 originalPrice: 39,
                 category: 'fresh',
@@ -314,7 +314,7 @@
             {
                 id: 503,
                 name: '精选牛肉 优质部位 新鲜冷冻',
-                image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/235f510e0f594d934153998d3de87148.jpg',
                 price: 89,
                 originalPrice: 119,
                 category: 'fresh',
@@ -323,7 +323,7 @@
             {
                 id: 504,
                 name: '进口零食大礼包 多种口味 休闲必备',
-                image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/69645b75baa9a4c84a572003c70fcdec.jpg',
                 price: 79,
                 originalPrice: 99,
                 category: 'snacks',
@@ -332,7 +332,7 @@
             {
                 id: 505,
                 name: '新鲜鸡蛋 农家散养 营养丰富',
-                image: 'https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/d404dc3ed2310ea175dbd0431fc54c69.jpg',
                 price: 25,
                 originalPrice: 35,
                 category: 'fresh',
@@ -341,7 +341,7 @@
             {
                 id: 506,
                 name: '巧克力礼盒 多种口味 精美包装',
-                image: 'https://images.unsplash.com/photo-1511381939415-e44015466834?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/dab4bb91db9f327b9550bc754b5f1ca6.jpg',
                 price: 129,
                 originalPrice: 169,
                 category: 'snacks',
@@ -350,7 +350,7 @@
             {
                 id: 507,
                 name: '新鲜牛奶 牧场直供 当日生产',
-                image: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/7ea9e388f6343aa944eb30abc550f55d.jpg',
                 price: 19,
                 originalPrice: 29,
                 category: 'fresh',
@@ -359,13 +359,28 @@
             {
                 id: 508,
                 name: '薯片组合装 多种口味 休闲零食',
-                image: 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/26969f3615ccee73a014be7a83baa8d7.jpg',
                 price: 39,
                 originalPrice: 49,
                 category: 'snacks',
                 description: '薯片组合装，多种口味。'
             }
         ];
+
+        let pageProducts = foodProducts;
+        const pageCategories = new Set(pageProducts.map(p => p.category).filter(Boolean));
+
+        async function loadPageProducts() {
+            try {
+                const allProducts = await apiGetProducts({ per_page: 200 });
+                pageProducts = pageCategories.size
+                    ? allProducts.filter(p => pageCategories.has(p.category))
+                    : allProducts;
+            } catch (err) {
+                pageProducts = foodProducts;
+            }
+        }
+
         
         // 渲染商品列表
         function renderProducts(containerId, products) {
@@ -407,45 +422,33 @@
         }
         
         function showProductDetail(productId) {
-            const product = foodProducts.find(p => p.id === productId);
+            const product = pageProducts.find(p => p.id === productId);
             if (product) {
                 window.location.href = `product-detail.html?id=${product.id}`;
             }
         }
         
         function addToCart(productId) {
-            const product = foodProducts.find(p => p.id === productId);
+            const product = pageProducts.find(p => p.id === productId);
             if (!product) return;
-            
-            let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-            const existingItemIndex = cartItems.findIndex(item => item.id === productId);
-            
-            if (existingItemIndex !== -1) {
-                cartItems[existingItemIndex].quantity += 1;
-            } else {
-                cartItems.push({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    image: product.image,
-                    quantity: 1
-                });
-            }
-            
-            localStorage.setItem('cart', JSON.stringify(cartItems));
-            updateCartCount();
-            alert(`成功添加 "${product.name}" 到购物车！`);
+
+            apiAddToCart(product.id, 1).then(async () => {
+                await refreshCartCount();
+                alert(`Added "${product.name}" to cart.`);
+            }).catch(err => {
+                if (err.status === 401) {
+                    alert('Please log in first.');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                alert(err.message || 'Failed to add to cart.');
+            });
         }
-        
-        function updateCartCount() {
-            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-            const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
-            const cartCountElement = document.getElementById('cartCount');
-            if (cartCountElement) {
-                cartCountElement.textContent = totalItems;
-            }
+
+        async function updateCartCount() {
+            await refreshCartCount();
         }
-        
+
         function performSearch() {
             const query = document.getElementById('searchInput').value.trim();
             if (query) {
@@ -456,12 +459,13 @@
             }
         }
         
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadPageProducts();
             updateCartCount();
             
-            const hotProducts = foodProducts.slice(0, 5);
-            const freshFood = foodProducts.filter(p => p.category === 'fresh');
-            const snacks = foodProducts.filter(p => p.category === 'snacks');
+            const hotProducts = pageProducts.slice(0, 5);
+            const freshFood = pageProducts.filter(p => p.category === 'fresh');
+            const snacks = pageProducts.filter(p => p.category === 'snacks');
             
             renderProducts('hotProducts', hotProducts);
             renderProducts('freshFood', freshFood);

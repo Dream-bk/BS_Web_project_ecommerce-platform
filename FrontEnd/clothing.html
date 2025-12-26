@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>服装服饰 - 在线电商平台</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="common.css">
+        <link rel="stylesheet" href="assets/css/common.css">
     <style>
         /* 服装服饰页面特有样式 */
         .category-header {
@@ -254,7 +253,7 @@
     <div class="container main-content">
         <!-- 促销横幅 -->
         <div class="banner" style="margin-bottom: 30px; height: 300px; border-radius: 8px; overflow: hidden;">
-            <img src="https://images.unsplash.com/photo-1445205170230-053b83016050?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="服装服饰促销" style="width: 100%; height: 100%; object-fit: cover;">
+            <img src="assets/img/products/59d5194fac96afb833d5e542ca53be93.jpg" alt="服装服饰促销" style="width: 100%; height: 100%; object-fit: cover;">
         </div>
         
         <!-- 热门推荐 -->
@@ -325,13 +324,14 @@
         </div>
     </footer>
 
+    <script src="assets/js/shared-data.js"></script>
     <script>
         // 服装服饰数据
         const clothingProducts = [
             {
                 id: 101,
                 name: '男士运动跑步鞋 透气减震 轻便耐磨 多色可选',
-                image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/332a7b8c84a4b4f61ff040c0e301f8a5.jpg',
                 price: 289,
                 originalPrice: 399,
                 category: 'men',
@@ -340,7 +340,7 @@
             {
                 id: 102,
                 name: '时尚女士连衣裙 夏季新款 修身显瘦 气质淑女',
-                image: 'https://images.unsplash.com/photo-1539008835657-9e8e9680c956?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/35045c76b65490de2b56841a22d3aa5e.jpg',
                 price: 199,
                 originalPrice: 299,
                 category: 'women',
@@ -349,7 +349,7 @@
             {
                 id: 103,
                 name: '男士休闲裤 直筒宽松 舒适面料 多色可选',
-                image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/92e0410094806c3f045bd3db5f78c8e1.jpg',
                 price: 159,
                 originalPrice: 229,
                 category: 'men',
@@ -358,7 +358,7 @@
             {
                 id: 104,
                 name: '女士衬衫 职业装 雪纺面料 优雅气质',
-                image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/14dde03917ff50baec53e8ca4cd5926e.jpg',
                 price: 129,
                 originalPrice: 189,
                 category: 'women',
@@ -367,7 +367,7 @@
             {
                 id: 105,
                 name: '男士夹克外套 防风保暖 时尚潮流',
-                image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/248ab24aae88b6221b9662c6203ff3a3.jpg',
                 price: 399,
                 originalPrice: 499,
                 category: 'men',
@@ -376,7 +376,7 @@
             {
                 id: 106,
                 name: '女士牛仔裤 修身显瘦 弹力面料',
-                image: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/b81e9b0bcea8ff94aebf08c96fb746f2.jpg',
                 price: 169,
                 originalPrice: 239,
                 category: 'women',
@@ -385,7 +385,7 @@
             {
                 id: 107,
                 name: '男士T恤 纯棉材质 简约百搭',
-                image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/b0aa81009e5754cf71ec95a65c1d27a8.jpg',
                 price: 89,
                 originalPrice: 129,
                 category: 'men',
@@ -394,13 +394,28 @@
             {
                 id: 108,
                 name: '女士毛衣 秋冬新款 柔软舒适',
-                image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/affe319a816faa123ddd9e77e22ba3ed.jpg',
                 price: 229,
                 originalPrice: 299,
                 category: 'women',
                 description: '女士毛衣，秋冬新款设计。'
             }
         ];
+
+        let pageProducts = clothingProducts;
+        const pageCategories = new Set(pageProducts.map(p => p.category).filter(Boolean));
+
+        async function loadPageProducts() {
+            try {
+                const allProducts = await apiGetProducts({ per_page: 200 });
+                pageProducts = pageCategories.size
+                    ? allProducts.filter(p => pageCategories.has(p.category))
+                    : allProducts;
+            } catch (err) {
+                pageProducts = clothingProducts;
+            }
+        }
+
         
         // 渲染商品列表
         function renderProducts(containerId, products) {
@@ -445,7 +460,7 @@
         
         // 显示商品详情
         function showProductDetail(productId) {
-            const product = clothingProducts.find(p => p.id === productId);
+            const product = pageProducts.find(p => p.id === productId);
             if (!product) return;
             
             window.location.href = `product-detail.html?id=${product.id}`;
@@ -453,42 +468,26 @@
         
         // 添加到购物车
         function addToCart(productId) {
-            const product = clothingProducts.find(p => p.id === productId);
+            const product = pageProducts.find(p => p.id === productId);
             if (!product) return;
-            
-            let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-            
-            const existingItemIndex = cartItems.findIndex(item => item.id === productId);
-            
-            if (existingItemIndex !== -1) {
-                cartItems[existingItemIndex].quantity += 1;
-            } else {
-                cartItems.push({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    image: product.image,
-                    quantity: 1
-                });
-            }
-            
-            localStorage.setItem('cart', JSON.stringify(cartItems));
-            updateCartCount();
-            
-            alert(`成功添加 "${product.name}" 到购物车！`);
+
+            apiAddToCart(product.id, 1).then(async () => {
+                await refreshCartCount();
+                alert(`Added "${product.name}" to cart.`);
+            }).catch(err => {
+                if (err.status === 401) {
+                    alert('Please log in first.');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                alert(err.message || 'Failed to add to cart.');
+            });
         }
-        
-        // 更新购物车数量
-        function updateCartCount() {
-            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-            const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
-            const cartCountElement = document.getElementById('cartCount');
-            if (cartCountElement) {
-                cartCountElement.textContent = totalItems;
-            }
+
+        async function updateCartCount() {
+            await refreshCartCount();
         }
-        
-        // 搜索功能
+
         function performSearch() {
             const query = document.getElementById('searchInput').value.trim();
             if (query) {
@@ -500,12 +499,13 @@
         }
         
         // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadPageProducts();
             updateCartCount();
             
-            const hotProducts = clothingProducts.slice(0, 5);
-            const menClothing = clothingProducts.filter(p => p.category === 'men');
-            const womenClothing = clothingProducts.filter(p => p.category === 'women');
+            const hotProducts = pageProducts.slice(0, 5);
+            const menClothing = pageProducts.filter(p => p.category === 'men');
+            const womenClothing = pageProducts.filter(p => p.category === 'women');
             
             renderProducts('hotProducts', hotProducts);
             renderProducts('menClothing', menClothing);

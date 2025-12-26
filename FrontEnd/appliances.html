@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>家用电器 - 在线电商平台</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="common.css">
+        <link rel="stylesheet" href="assets/css/common.css">
     <style>
         /* 家用电器页面特有样式 */
         .category-header {
@@ -254,7 +253,7 @@
     <div class="container main-content">
         <!-- 促销横幅 -->
         <div class="banner" style="margin-bottom: 30px; height: 300px; border-radius: 8px; overflow: hidden;">
-            <img src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="家用电器促销" style="width: 100%; height: 100%; object-fit: cover;">
+            <img src='assets/img/products/家电.webp' alt="家用电器促销" style="width: 100%; height: 100%; object-fit: cover;">
         </div>
         
         <!-- 热门推荐 -->
@@ -325,13 +324,14 @@
         </div>
     </footer>
 
+    <script src="assets/js/shared-data.js"></script>
     <script>
         // 家用电器数据
         const appliancesProducts = [
             {
                 id: 201,
                 name: '智能冰箱 大容量 双开门 风冷无霜 节能省电',
-                image: 'https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/7d1b056e68e41e13b0fd7efba46d0841.jpg',
                 price: 3999,
                 originalPrice: 4999,
                 category: 'kitchen',
@@ -340,7 +340,7 @@
             {
                 id: 202,
                 name: '滚筒洗衣机 全自动 大容量 智能控制 静音设计',
-                image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/xiyiji.webp',
                 price: 2899,
                 originalPrice: 3599,
                 category: 'living',
@@ -349,7 +349,7 @@
             {
                 id: 203,
                 name: '智能空调 变频 节能 静音 快速制冷制热',
-                image: 'https://images.unsplash.com/photo-1562133567-b6a0a01c8f5a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets\\img\\products\\aircondition.webp',
                 price: 3299,
                 originalPrice: 3999,
                 category: 'living',
@@ -358,7 +358,7 @@
             {
                 id: 204,
                 name: '微波炉 多功能 智能触控 快速加热',
-                image: 'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/wbl.webp',
                 price: 599,
                 originalPrice: 799,
                 category: 'kitchen',
@@ -367,7 +367,7 @@
             {
                 id: 205,
                 name: '电磁炉 大功率 智能控温 安全保护',
-                image: 'https://images.unsplash.com/photo-1585515320310-26137a7d49e5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/dcl.webp',
                 price: 399,
                 originalPrice: 499,
                 category: 'kitchen',
@@ -376,7 +376,7 @@
             {
                 id: 206,
                 name: '电饭煲 多功能 智能预约 不粘锅内胆',
-                image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/69645b75baa9a4c84a572003c70fcdec.jpg',
                 price: 299,
                 originalPrice: 399,
                 category: 'kitchen',
@@ -385,7 +385,7 @@
             {
                 id: 207,
                 name: '吸尘器 无线 强力吸尘 大容量电池',
-                image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/xcq.webp',
                 price: 899,
                 originalPrice: 1199,
                 category: 'living',
@@ -394,13 +394,28 @@
             {
                 id: 208,
                 name: '智能电视 4K超高清 人工智能 大屏影院',
-                image: 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/c806e9b4f88421bc6e3142397982fc96.jpg',
                 price: 4999,
                 originalPrice: 5999,
                 category: 'living',
                 description: '智能电视，4K超高清显示。'
             }
         ];
+
+        let pageProducts = appliancesProducts;
+        const pageCategories = new Set(pageProducts.map(p => p.category).filter(Boolean));
+
+        async function loadPageProducts() {
+            try {
+                const allProducts = await apiGetProducts({ per_page: 200 });
+                pageProducts = pageCategories.size
+                    ? allProducts.filter(p => pageCategories.has(p.category))
+                    : allProducts;
+            } catch (err) {
+                pageProducts = appliancesProducts;
+            }
+        }
+
         
         // 渲染商品列表
         function renderProducts(containerId, products) {
@@ -442,45 +457,33 @@
         }
         
         function showProductDetail(productId) {
-            const product = appliancesProducts.find(p => p.id === productId);
+            const product = pageProducts.find(p => p.id === productId);
             if (product) {
                 window.location.href = `product-detail.html?id=${product.id}`;
             }
         }
         
         function addToCart(productId) {
-            const product = appliancesProducts.find(p => p.id === productId);
+            const product = pageProducts.find(p => p.id === productId);
             if (!product) return;
-            
-            let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-            const existingItemIndex = cartItems.findIndex(item => item.id === productId);
-            
-            if (existingItemIndex !== -1) {
-                cartItems[existingItemIndex].quantity += 1;
-            } else {
-                cartItems.push({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    image: product.image,
-                    quantity: 1
-                });
-            }
-            
-            localStorage.setItem('cart', JSON.stringify(cartItems));
-            updateCartCount();
-            alert(`成功添加 "${product.name}" 到购物车！`);
+
+            apiAddToCart(product.id, 1).then(async () => {
+                await refreshCartCount();
+                alert(`Added "${product.name}" to cart.`);
+            }).catch(err => {
+                if (err.status === 401) {
+                    alert('Please log in first.');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                alert(err.message || 'Failed to add to cart.');
+            });
         }
-        
-        function updateCartCount() {
-            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-            const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
-            const cartCountElement = document.getElementById('cartCount');
-            if (cartCountElement) {
-                cartCountElement.textContent = totalItems;
-            }
+
+        async function updateCartCount() {
+            await refreshCartCount();
         }
-        
+
         function performSearch() {
             const query = document.getElementById('searchInput').value.trim();
             if (query) {
@@ -491,12 +494,13 @@
             }
         }
         
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadPageProducts();
             updateCartCount();
             
-            const hotProducts = appliancesProducts.slice(0, 5);
-            const kitchenAppliances = appliancesProducts.filter(p => p.category === 'kitchen');
-            const livingAppliances = appliancesProducts.filter(p => p.category === 'living');
+            const hotProducts = pageProducts.slice(0, 5);
+            const kitchenAppliances = pageProducts.filter(p => p.category === 'kitchen');
+            const livingAppliances = pageProducts.filter(p => p.category === 'living');
             
             renderProducts('hotProducts', hotProducts);
             renderProducts('kitchenAppliances', kitchenAppliances);

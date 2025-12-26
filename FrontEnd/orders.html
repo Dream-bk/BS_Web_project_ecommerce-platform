@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>在线电商平台 - 我的订单</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="assets/css/common.css">
     <style>
 .order-header {
             border-bottom: 2px solid #ff0036;
@@ -238,7 +237,102 @@
             font-weight: normal;
         }
         
-        .order-
+        .order-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f9f9f9;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .order-date {
+            color: #999;
+            font-size: 13px;
+        }
+
+        .order-card-content {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .order-products {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .order-product {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .order-product-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .order-product-name {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .order-product-price {
+            color: #ff0036;
+            font-weight: 600;
+        }
+
+        .order-summary {
+            min-width: 160px;
+            text-align: right;
+            color: #666;
+        }
+
+        .order-total {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .order-card-footer {
+            display: flex;
+            justify-content: flex-end;
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            background-color: #fafafa;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-order-action {
+            padding: 8px 18px;
+            border-radius: 4px;
+            border: 1px solid #ff0036;
+            background-color: #ff0036;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-order-action.buy-again {
+            background-color: #fff;
+            color: #ff0036;
+        }
 
 @media (max-width: 768px) {
     .order-filter {
@@ -251,7 +345,7 @@
         gap: 10px;
     }
 
-    .order-footer {
+    .order-card-footer {
         flex-wrap: wrap;
         gap: 15px;
     }
@@ -325,13 +419,13 @@
         <div class="container">
             <ul class="category-list">
                 <li><a href="index.html" class="category-link">首页</a></li>
-                <li><a class="category-link" data-category="electronics">电子产品</a></li>
-                <li><a class="category-link" data-category="clothing">服装服饰</a></li>
-                <li><a class="category-link" data-category="appliances">家用电器</a></li>
-                <li><a class="category-link" data-category="cosmetics">美妆护肤</a></li>
-                <li><a class="category-link" data-category="books">图书音像</a></li>
-                <li><a class="category-link" data-category="food">食品生鲜</a></li>
-                <li><a class="category-link" data-category="sports">运动户外</a></li>
+                <li><a class="category-link" href="electronics.html">电子产品</a></li>
+                <li><a class="category-link" href="clothing.html">服装服饰</a></li>
+                <li><a class="category-link" href="appliances.html">家用电器</a></li>
+                <li><a class="category-link" href="cosmetics.html">美妆护肤</a></li>
+                <li><a class="category-link" href="books.html">图书音像</a></li>
+                <li><a class="category-link" href="food.html">食品生鲜</a></li>
+                <li><a class="category-link" href="sports.html">运动户外</a></li>
             </ul>
         </div>
     </nav>
@@ -418,370 +512,222 @@
         </div>
     </footer>
 
+    <script src="assets/js/shared-data.js"></script>
     <script>
-        // 全局变量：当前筛选的订单状态
+        let orders = [];
         let currentFilterStatus = 'all';
+        let currentUser = null;
 
-        // 页面加载初始化
-        document.addEventListener('DOMContentLoaded', () => {
-            // 检查用户是否登录
-            checkUserLogin();
-            // 更新购物车数量
-            updateCartCount();
-            // 初始化订单列表
-            initOrderList();
-            // 绑定事件
-            bindEventListeners();
-        });
-
-        // 检查用户是否登录
-        function checkUserLogin() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (!currentUser) {
-                if (confirm('查看订单需要先登录，是否跳转到登录页面？')) {
-                    window.location.href = 'login.html';
-                }
-            }
-        }
-
-        // 获取本地存储的订单数据
-        function getOrders() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (!currentUser) return [];
-            
-            // 获取所有订单，筛选当前用户的订单
-            const allOrders = JSON.parse(localStorage.getItem('orders')) || [];
-            return allOrders.filter(order => order.userId === currentUser.id);
-        }
-
-        // 保存订单数据到本地存储
-        function saveOrders(orders) {
-            localStorage.setItem('orders', JSON.stringify(orders));
-        }
-
-        // 初始化订单列表
-        function initOrderList() {
-            renderOrderList(currentFilterStatus);
-        }
-
-        // 渲染订单列表
-        function renderOrderList(status) {
-            const orders = getOrders();
-            const orderListEl = document.getElementById('orderList');
-            const emptyOrderEl = document.getElementById('emptyOrder');
-            
-            // 筛选订单
-            let filteredOrders = orders;
-            if (status !== 'all') {
-                filteredOrders = orders.filter(order => order.status === status);
-            }
-
-            // 显示空订单提示或订单列表
-            if (filteredOrders.length === 0) {
-                emptyOrderEl.style.display = 'block';
-                orderListEl.style.display = 'none';
-                return;
-            }
-
-            emptyOrderEl.style.display = 'none';
-            orderListEl.style.display = 'block';
-            orderListEl.innerHTML = '';
-
-            // 渲染每个订单
-            filteredOrders.forEach(order => {
-                const orderCard = createOrderCard(order);
-                orderListEl.appendChild(orderCard);
-            });
-        }
-
-        // 创建单个订单卡片
-        function createOrderCard(order) {
-            // 状态文本和样式类映射
-            const statusConfig = {
-                pending: { text: '待付款', class: 'status-pending' },
-                paid: { text: '待发货', class: 'status-paid' },
-                shipped: { text: '待收货', class: 'status-shipped' },
-                completed: { text: '已完成', class: 'status-completed' },
-                cancelled: { text: '已取消', class: 'status-cancelled' }
-            };
-
-            const config = statusConfig[order.status] || statusConfig.pending;
-            const orderDate = new Date(order.createTime).toLocaleString();
-            let totalAmount = 0;
-
-            // 创建订单卡片容器
-            const card = document.createElement('div');
-            card.className = 'order-card';
-            card.dataset.orderId = order.id;
-
-            // 构建订单商品列表HTML
-            let orderItemsHtml = '';
-            order.items.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                totalAmount += itemTotal;
-                
-                orderItemsHtml += `
-                    <div class="order-item">
-                        <div class="order-item-image">
-                            <img src="${item.image}" alt="${item.name}">
-                        </div>
-                        <div class="order-item-info">
-                            <div class="order-item-name">${item.name}</div>
-                            <div class="order-item-spec">颜色: ${item.spec || '黑色'} | 版本: ${item.version || '标准版'}</div>
-                            <div class="order-item-price">
-                                ¥${item.price.toFixed(2)} × ${item.quantity} 
-                                <span>小计: ¥${itemTotal.toFixed(2)}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            // 构建订单操作按钮HTML
-            let actionButtonsHtml = '';
-            switch (order.status) {
-                case 'pending':
-                    actionButtonsHtml = `
-                        <button class="order-btn primary pay-order" data-order-id="${order.id}">立即付款</button>
-                        <button class="order-btn cancel-order" data-order-id="${order.id}">取消订单</button>
-                    `;
-                    break;
-                case 'paid':
-                    actionButtonsHtml = `
-                        <button class="order-btn cancel-order" data-order-id="${order.id}">取消订单</button>
-                    `;
-                    break;
-                case 'shipped':
-                    actionButtonsHtml = `
-                        <button class="order-btn primary confirm-receipt" data-order-id="${order.id}">确认收货</button>
-                    `;
-                    break;
-                case 'completed':
-                    actionButtonsHtml = `
-                        <button class="order-btn view-detail" data-order-id="${order.id}">查看详情</button>
-                        <button class="order-btn buy-again" data-order-id="${order.id}">再次购买</button>
-                    `;
-                    break;
-                case 'cancelled':
-                    actionButtonsHtml = `
-                        <button class="order-btn view-detail" data-order-id="${order.id}">查看详情</button>
-                    `;
-                    break;
-            }
-
-            // 拼接订单卡片HTML
-            card.innerHTML = `
-                <div class="order-header-row">
-                    <div class="order-id">
-                        订单编号: <span>${order.id}</span>
-                        <span style="margin-left: 20px; color: #999; font-weight: normal;">
-                            创建时间: ${orderDate}
-                        </span>
-                    </div>
-                    <div class="order-status ${config.class}">${config.text}</div>
-                </div>
-                <div class="order-body">
-                    <div class="order-items">
-                        ${orderItemsHtml}
-                    </div>
-                    <div class="order-footer">
-                        <div class="order-total">
-                            订单总额: <span>¥${totalAmount.toFixed(2)}</span>
-                        </div>
-                        <div class="order-actions">
-                            ${actionButtonsHtml}
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            return card;
-        }
-
-        // 更新购物车数量
-        function updateCartCount() {
-            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-            const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
-            document.getElementById('cartCount').textContent = cartCount;
-        }
-
-        // 绑定事件监听
-        function bindEventListeners() {
-            // 去购物按钮
-            document.getElementById('goShoppingBtn').addEventListener('click', () => {
-                window.location.href = 'index.html';
-            });
-
-            // 订单状态筛选按钮
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // 移除所有按钮的active类
-                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                    // 添加当前按钮的active类
-                    this.classList.add('active');
-                    // 更新筛选状态并重新渲染
-                    currentFilterStatus = this.dataset.status;
-                    renderOrderList(currentFilterStatus);
-                });
-            });
-
-            // 订单操作按钮事件（委托方式）
-            document.getElementById('orderList').addEventListener('click', function(e) {
-                const target = e.target;
-                const orderId = target.closest('[data-order-id]')?.dataset.orderId;
-                
-                if (!orderId) return;
-
-                // 立即付款
-                if (target.classList.contains('pay-order') || target.closest('.pay-order')) {
-                    payOrder(orderId);
-                }
-                // 取消订单
-                else if (target.classList.contains('cancel-order') || target.closest('.cancel-order')) {
-                    cancelOrder(orderId);
-                }
-                // 确认收货
-                else if (target.classList.contains('confirm-receipt') || target.closest('.confirm-receipt')) {
-                    confirmReceipt(orderId);
-                }
-                // 查看详情
-                else if (target.classList.contains('view-detail') || target.closest('.view-detail')) {
-                    viewOrderDetail(orderId);
-                }
-                // 再次购买
-                else if (target.classList.contains('buy-again') || target.closest('.buy-again')) {
-                    buyAgain(orderId);
-                }
-            });
-        }
-
-        // 付款操作
-        function payOrder(orderId) {
-            const orders = getOrders();
-            const orderIndex = orders.findIndex(o => o.id === orderId);
-            
-            if (orderIndex === -1) return;
-
-            if (confirm('确认支付此订单吗？')) {
-                orders[orderIndex].status = 'paid';
-                orders[orderIndex].payTime = new Date().toISOString();
-                saveOrders(orders);
-                renderOrderList(currentFilterStatus);
-                alert('付款成功！等待商家发货');
-            }
-        }
-
-        // 取消订单
-        function cancelOrder(orderId) {
-            const orders = getOrders();
-            const orderIndex = orders.findIndex(o => o.id === orderId);
-            
-            if (orderIndex === -1) return;
-
-            if (confirm('确认取消此订单吗？')) {
-                orders[orderIndex].status = 'cancelled';
-                orders[orderIndex].cancelTime = new Date().toISOString();
-                saveOrders(orders);
-                renderOrderList(currentFilterStatus);
-                alert('订单已取消');
-            }
-        }
-
-        // 确认收货
-        function confirmReceipt(orderId) {
-            const orders = getOrders();
-            const orderIndex = orders.findIndex(o => o.id === orderId);
-            
-            if (orderIndex === -1) return;
-
-            if (confirm('确认已收到商品吗？')) {
-                orders[orderIndex].status = 'completed';
-                orders[orderIndex].completeTime = new Date().toISOString();
-                saveOrders(orders);
-                renderOrderList(currentFilterStatus);
-                alert('确认收货成功！订单已完成');
-            }
-        }
-
-        // 查看订单详情
-        function viewOrderDetail(orderId) {
-            const orders = getOrders();
-            const order = orders.find(o => o.id === orderId);
-            
-            if (!order) return;
-
-            // 构建详情文本
-            let detailText = `
-                订单编号：${order.id}
-                创建时间：${new Date(order.createTime).toLocaleString()}
-                订单状态：${getStatusText(order.status)}
-                商品数量：${order.items.reduce((total, item) => total + item.quantity, 0)} 件
-                订单总额：¥${order.items.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2)}
-            `;
-
-            if (order.payTime) {
-                detailText += `\n付款时间：${new Date(order.payTime).toLocaleString()}`;
-            }
-
-            if (order.cancelTime) {
-                detailText += `\n取消时间：${new Date(order.cancelTime).toLocaleString()}`;
-            }
-
-            if (order.completeTime) {
-                detailText += `\n完成时间：${new Date(order.completeTime).toLocaleString()}`;
-            }
-
-            alert(detailText);
-        }
-
-        // 再次购买
-        function buyAgain(orderId) {
-            const orders = getOrders();
-            const order = orders.find(o => o.id === orderId);
-            
-            if (!order) return;
-
-            // 获取当前购物车
-            let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-            // 将订单商品添加到购物车
-            order.items.forEach(orderItem => {
-                const cartItemIndex = cart.findIndex(item => item.id === orderItem.id);
-                
-                if (cartItemIndex > -1) {
-                    // 商品已在购物车，增加数量
-                    cart[cartItemIndex].quantity += orderItem.quantity;
-                } else {
-                    // 商品不在购物车，添加新项
-                    cart.push({
-                        id: orderItem.id,
-                        name: orderItem.name,
-                        image: orderItem.image,
-                        price: orderItem.price,
-                        quantity: orderItem.quantity,
-                        spec: orderItem.spec,
-                        selected: true
-                    });
-                }
-            });
-
-            // 保存购物车并跳转
-            localStorage.setItem('cart', JSON.stringify(cart));
-            alert('商品已添加到购物车，即将跳转到购物车页面');
-            window.location.href = 'cart.html';
-        }
-
-        // 获取状态文本
         function getStatusText(status) {
             const statusMap = {
                 pending: '待付款',
                 paid: '待发货',
                 shipped: '待收货',
+                delivered: '已完成',
                 completed: '已完成',
                 cancelled: '已取消'
             };
             return statusMap[status] || '未知状态';
         }
+
+        function getStatusClass(status) {
+            const classMap = {
+                pending: 'pending',
+                paid: 'paid',
+                shipped: 'shipped',
+                delivered: 'completed',
+                completed: 'completed',
+                cancelled: 'cancelled'
+            };
+            return classMap[status] || 'pending';
+        }
+
+        async function loadOrders() {
+            try {
+                currentUser = await apiGetCurrentUser();
+            } catch (err) {
+                if (err.status === 401) {
+                    alert('请先登录！');
+                    window.location.href = 'login.html';
+                    return;
+                }
+            }
+
+            try {
+                orders = await apiGetOrders();
+            } catch (err) {
+                orders = [];
+            }
+
+            renderOrderList(currentFilterStatus);
+        }
+
+        function renderOrderList(status) {
+            const orderListEl = document.getElementById('orderList');
+            const emptyOrder = document.getElementById('emptyOrder');
+
+            let filteredOrders = orders;
+            if (status !== 'all') {
+                if (status === 'completed') {
+                    filteredOrders = orders.filter(order => ['completed', 'delivered'].includes(order.status));
+                } else {
+                    filteredOrders = orders.filter(order => order.status === status);
+                }
+            }
+
+            if (!filteredOrders.length) {
+                orderListEl.style.display = 'none';
+                emptyOrder.style.display = 'block';
+                return;
+            }
+
+            emptyOrder.style.display = 'none';
+            orderListEl.style.display = 'block';
+            orderListEl.innerHTML = '';
+
+            filteredOrders.forEach(order => {
+                const items = Array.isArray(order.items) ? order.items : [];
+                const totalQty = items.reduce((total, item) => total + item.quantity, 0);
+                const totalAmount = Number(order.total_amount || 0);
+                const statusClass = getStatusClass(order.status);
+
+                const orderCard = document.createElement('div');
+                orderCard.className = 'order-card';
+                orderCard.dataset.orderId = order.id;
+                orderCard.innerHTML = `
+                    <div class="order-card-header">
+                        <div class="order-info">
+                            <div class="order-id">订单号：${order.order_number}</div>
+                            <div class="order-date">下单时间：${order.created_at}</div>
+                        </div>
+                        <div class="order-status status-${statusClass}">${getStatusText(order.status)}</div>
+                    </div>
+                    <div class="order-card-content">
+                        <div class="order-products">
+                            ${items.map(item => `
+                                <div class="order-product">
+                                    <div class="order-product-info">
+                                        <div class="order-product-name">${item.product_name || '商品已下架'}</div>
+                                        <div class="order-product-price">&yen;${Number(item.price).toFixed(2)} x ${item.quantity}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="order-summary">
+                            <div class="order-total">共 ${totalQty} 件商品<br>合计：&yen;${totalAmount.toFixed(2)}</div>
+                        </div>
+                    </div>
+                    <div class="order-card-footer">
+                        <div class="order-actions">
+                            <button class="btn-order-action view-detail" data-id="${order.id}">查看详情</button>
+                            <button class="btn-order-action buy-again" data-id="${order.id}">再买一次</button>
+                        </div>
+                    </div>
+                `;
+
+                orderListEl.appendChild(orderCard);
+            });
+        }
+
+        async function buyAgain(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order) return;
+
+            try {
+                const items = Array.isArray(order.items) ? order.items : [];
+                for (const item of items) {
+                    await apiAddToCart(item.product_id, item.quantity);
+                }
+                await refreshCartCount();
+                alert('已加入购物车');
+                window.location.href = 'cart.html';
+            } catch (err) {
+                if (err.status === 401) {
+                    alert('请先登录！');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                alert(err.message || '加入购物车失败');
+            }
+        }
+
+        function viewOrderDetail(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order) return;
+            const items = Array.isArray(order.items) ? order.items : [];
+
+            const detailText = `订单号：${order.order_number}
+下单时间：${order.created_at}
+订单状态：${getStatusText(order.status)}
+商品数量：${items.reduce((total, item) => total + item.quantity, 0)} 件
+订单金额：¥${Number(order.total_amount || 0).toFixed(2)}`;
+            alert(detailText);
+        }
+
+        function initFilters() {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilterStatus = this.dataset.status;
+                    renderOrderList(currentFilterStatus);
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            await refreshCartCount();
+
+            document.getElementById('searchButton').addEventListener('click', function() {
+                const query = document.getElementById('searchInput').value.trim();
+                if (query) {
+                    window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+                } else {
+                    alert('请输入搜索关键词');
+                }
+            });
+
+            const userAvatar = document.getElementById('userAvatar');
+            if (userAvatar) {
+                userAvatar.addEventListener('click', function() {
+                    const storedUser = localStorage.getItem('currentUser');
+                    if (storedUser) {
+                        const user = JSON.parse(storedUser);
+                        alert(`欢迎 ${user.name || user.username}`);
+                    } else {
+                        window.location.href = 'login.html';
+                    }
+                });
+            }
+
+            const customerServiceLink = document.getElementById('customerServiceLink');
+            if (customerServiceLink) {
+                customerServiceLink.addEventListener('click', function() {
+                    alert('客服功能正在开发中...');
+                });
+            }
+
+            const goShoppingBtn = document.getElementById('goShoppingBtn');
+            if (goShoppingBtn) {
+                goShoppingBtn.addEventListener('click', function() {
+                    window.location.href = 'index.html';
+                });
+            }
+
+            initFilters();
+            await loadOrders();
+
+            document.getElementById('orderList').addEventListener('click', function(e) {
+                const target = e.target;
+                if (target.classList.contains('view-detail') || target.closest('.view-detail')) {
+                    const orderId = Number(target.dataset.id || target.closest('.view-detail').dataset.id);
+                    viewOrderDetail(orderId);
+                } else if (target.classList.contains('buy-again') || target.closest('.buy-again')) {
+                    const orderId = Number(target.dataset.id || target.closest('.buy-again').dataset.id);
+                    buyAgain(orderId);
+                }
+            });
+        });
     </script>
 </body>
 </html>

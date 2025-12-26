@@ -4,14 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>在线电商平台</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="common.css">
+        <link rel="stylesheet" href="assets/css/common.css">
     <style>
 .auth-header h1 {
     font-weight: normal;
 }
     </style>
-<script src="shared-data.js"></script>
+<script src="assets/js/shared-data.js"></script>
 </head>
 <body>
     <!-- 顶部导航栏 -->
@@ -192,82 +191,63 @@
     </footer>
 
     <script>
-        // 购物车数据
-        let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-        
-        // 更新购物车数量
-        function updateCartCount() {
-            const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
-            const cartCount = document.getElementById('cartCount');
-            if (cartCount) {
-                cartCount.textContent = totalItems;
-            }
-        }
-        
-        // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            // 检查登录状态
-            const currentUser = localStorage.getItem('currentUser');
-            
-            // 更新购物车数量
-            updateCartCount();
-            
-            // 注册表单提交
-            document.getElementById('registerForm').addEventListener('submit', function(e) {
+        document.addEventListener('DOMContentLoaded', async function() {
+            await refreshCartCount();
+
+            const storedUser = localStorage.getItem('currentUser');
+
+            document.getElementById('registerForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
-                
-                const username = document.getElementById('regUsername').value;
-                const phone = document.getElementById('regPhone').value;
-                const email = document.getElementById('regEmail').value;
+
+                const username = document.getElementById('regUsername').value.trim();
+                const phone = document.getElementById('regPhone').value.trim();
+                const email = document.getElementById('regEmail').value.trim();
                 const password = document.getElementById('regPassword').value;
                 const confirmPassword = document.getElementById('regConfirmPassword').value;
-                
-                // 简单验证
+
                 if (!username || !phone || !email || !password || !confirmPassword) {
-                    document.getElementById('registerErrorMessage').textContent = '请填写所有必填项';
+                    document.getElementById('registerErrorMessage').textContent = '请填写完整信息';
                     document.getElementById('registerErrorMessage').classList.add('show');
                     return;
                 }
-                
+
                 if (password !== confirmPassword) {
-                    document.getElementById('registerErrorMessage').textContent = '两次输入的密码不一致';
+                    document.getElementById('registerErrorMessage').textContent = '两次密码不一致';
                     document.getElementById('registerErrorMessage').classList.add('show');
                     return;
                 }
-                
-                // 注册成功
+
                 document.getElementById('registerErrorMessage').classList.remove('show');
-                document.getElementById('registerSuccessMessage').style.display = 'block';
-                
-                // 模拟注册成功
-                setTimeout(() => {
-                    const currentUser = { username, name: username };
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                try {
+                    await apiRegister({ username, email, password });
+                    document.getElementById('registerSuccessMessage').style.display = 'block';
+                    await apiLogin(email, password, true);
                     window.location.href = 'index.html';
-                }, 1500);
+                } catch (err) {
+                    document.getElementById('registerErrorMessage').textContent = err.message || '注册失败';
+                    document.getElementById('registerErrorMessage').classList.add('show');
+                }
             });
-            
-            // 搜索功能
+
             document.getElementById('searchButton').addEventListener('click', function() {
                 const query = document.getElementById('searchInput').value.trim();
                 if (query) {
-                    alert(`搜索: ${query}`);
+                    window.location.href = `search.html?q=${encodeURIComponent(query)}`;
                 } else {
                     alert('请输入搜索关键词');
                 }
             });
-            
-            // 用户头像点击
+
             document.getElementById('userAvatar').addEventListener('click', function() {
-                if (currentUser) {
-                    const user = JSON.parse(currentUser);
-                    alert(`欢迎 ${user.name}`);
+                if (storedUser) {
+                    const user = JSON.parse(storedUser);
+                    alert(`欢迎 ${user.name || user.username}`);
                 } else {
                     window.location.href = 'login.html';
                 }
             });
-            
-            // 客户服务
+
             document.getElementById('customerServiceLink').addEventListener('click', function() {
                 alert('客服功能正在开发中...');
             });

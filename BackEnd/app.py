@@ -1,16 +1,21 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory, abort
 import os
 import sys
+from pathlib import Path
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from extensions import db, login_manager
 from werkzeug.security import generate_password_hash
 
+base_dir = Path(__file__).resolve().parents[1]
+frontend_root = base_dir / 'FrontEnd'
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'dev-secret-key-123456'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'
+db_path = (Path(__file__).resolve().parent / 'instance' / 'ecommerce.db')
+db_path.parent.mkdir(parents=True, exist_ok=True)
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path.as_posix()}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JSON_AS_ASCII'] = False
 app.config['JSON_SORT_KEYS'] = False
@@ -24,6 +29,10 @@ login_manager.login_message_category = 'info'
 def load_user(user_id):
     from models.user import User
     return User.query.get(int(user_id))
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    return jsonify({'success': False, 'message': '请先登录'}), 401
 
 def register_blueprints():
     try:
@@ -77,13 +86,18 @@ def init_database():
 
 @app.route('/')
 def index():
-    return jsonify({
-        'status': 'success',
-        'message': '电商后端服务运行中',
-        'api_base_url': 'http://127.0.0.1:5000/api'
-    })
+    return send_from_directory(frontend_root, 'index.html')
+
+
+@app.route('/<path:filename>')
+def serve_frontend_files(filename: str):
+    if filename.startswith('api/'):
+        abort(404)
+    return send_from_directory(frontend_root, filename)
+
+
+register_blueprints()
+init_database()
 
 if __name__ == '__main__':
-    init_database()
-    register_blueprints()
     app.run(debug=True, host='0.0.0.0', port=5000)

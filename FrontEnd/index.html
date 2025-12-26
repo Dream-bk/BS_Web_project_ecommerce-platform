@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>在线电商平台</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="common.css">
+        <link rel="stylesheet" href="assets/css/common.css">
     <style>
 .banner {
             margin-bottom: 30px;
@@ -87,7 +86,7 @@
     <!-- 主要内容区域 -->
     <div class="main-content">
         <div class="banner">
-            <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="促销广告">
+            <img src="assets/img/products/6c6dfb9c4fdd0331d107a4657b8fa4ab.jpg" alt="促销广告">
         </div>
         
         <section class="product-section">
@@ -154,223 +153,90 @@
         </div>
     </footer>
 
+    <script src="assets/js/shared-data.js"></script>
     <script>
-        // 模拟数据库
-        const mockProducts = [
-            {
-                id: 1,
-                name: '智能运动手表 多功能心率监测 GPS定位 蓝牙通话',
-                image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                price: 399,
-                originalPrice: 599,
-                category: 'electronics',
-                description: '这款智能运动手表采用最新科技，专为运动爱好者设计。具有精准的心率监测功能，能够实时监测您的心率变化，为您的运动提供科学指导。',
-                details: `<h3>产品介绍</h3>
-                    <p>这款智能运动手表采用最新科技，专为运动爱好者设计。它具有精准的心率监测功能，能够实时监测您的心率变化，为您的运动提供科学指导。</p>
-                    <h3>主要功能</h3>
-                    <ul>
-                        <li><strong>心率监测：</strong>24小时连续心率监测，精准度高</li>
-                        <li><strong>GPS定位：</strong>内置高精度GPS，记录运动轨迹</li>
-                        <li><strong>蓝牙通话：</strong>支持蓝牙连接手机，接听电话</li>
-                        <li><strong>运动模式：</strong>支持跑步、游泳、骑行等多种运动模式</li>
-                        <li><strong>超长续航：</strong>正常使用可达7天，待机时间30天</li>
-                    </ul>`
-            },
-            {
-                id: 2,
-                name: '无线蓝牙耳机 降噪耳机 运动耳机 超长续航',
-                image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                price: 299,
-                originalPrice: 499,
-                category: 'electronics',
-                description: '无线蓝牙耳机，降噪功能强大，适合运动和日常使用。',
-                details: '<p>无线蓝牙耳机详细介绍...</p>'
-            },
-            {
-                id: 3,
-                name: '数码单反相机 高清4K视频拍摄 专业级摄影器材',
-                image: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                price: 4599,
-                originalPrice: 5999,
-                category: 'electronics',
-                description: '专业级数码单反相机，适合摄影爱好者和专业人士。',
-                details: '<p>数码单反相机详细介绍...</p>'
-            },
-            {
-                id: 4,
-                name: '男士运动跑步鞋 透气减震 轻便耐磨 多色可选',
-                image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                price: 289,
-                originalPrice: 399,
-                category: 'clothing',
-                description: '舒适的运动跑步鞋，适合日常运动和健身。',
-                details: '<p>运动跑步鞋详细介绍...</p>'
-            },
-            {
-                id: 5,
-                name: '轻薄笔记本电脑 高性能处理器 超长续航 便携办公',
-                image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                price: 5999,
-                originalPrice: 6999,
-                category: 'electronics',
-                description: '轻薄便携的笔记本电脑，适合商务人士和学生。',
-                details: '<p>笔记本电脑详细介绍...</p>'
-            },
-            {
-                id: 6,
-                name: '机械键盘 游戏办公 背光RGB 可编程宏按键',
-                image: 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                price: 399,
-                originalPrice: 599,
-                category: 'electronics',
-                description: '机械键盘，适合游戏玩家和程序员。',
-                details: '<p>机械键盘详细介绍...</p>'
-            },
-            {
-                id: 7,
-                name: '时尚智能手表 健康监测 运动模式 消息提醒',
-                image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                price: 899,
-                originalPrice: 1299,
-                category: 'electronics',
-                description: '时尚智能手表，功能全面，设计优雅。',
-                details: '<p>智能手表详细介绍...</p>'
-            },
-            {
-                id: 8,
-                name: '防水蓝牙音箱 便携迷你音箱 户外运动音响',
-                image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                price: 199,
-                originalPrice: 299,
-                category: 'electronics',
-                description: '便携式蓝牙音箱，防水设计，适合户外使用。',
-                details: '<p>蓝牙音箱详细介绍...</p>'
+        let products = [];
+
+        async function loadProducts() {
+            try {
+                products = await apiGetProducts({ per_page: 24 });
+            } catch (err) {
+                products = [];
             }
-        ];
-        
-        // 购物车数据
-        let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-        
-        // 渲染商品列表
-        function renderProducts(containerId, products) {
+        }
+
+        function renderProducts(containerId, list) {
             const container = document.getElementById(containerId);
             if (!container) return;
-            
+
             container.innerHTML = '';
-            
-            products.forEach(product => {
+
+            list.forEach(product => {
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 productCard.dataset.id = product.id;
-                
+
                 productCard.innerHTML = `
                     <div class="product-image">
                         <img src="${product.image}" alt="${product.name}">
                     </div>
                     <div class="product-info">
                         <div class="product-name">${product.name}</div>
-                        <div class="product-price">¥${product.price.toFixed(2)} <span>¥${product.originalPrice.toFixed(2)}</span></div>
+                        <div class="product-price">&yen;${product.price.toFixed(2)} <span>&yen;${product.originalPrice.toFixed(2)}</span></div>
                         <button class="add-to-cart" data-id="${product.id}">加入购物车</button>
                     </div>
                 `;
-                
-                // 点击商品跳转到详情页
+
                 productCard.addEventListener('click', (e) => {
                     if (!e.target.classList.contains('add-to-cart')) {
                         window.location.href = `product-detail.html?id=${product.id}`;
                     }
                 });
-                
-                // 加入购物车按钮
+
                 const addToCartBtn = productCard.querySelector('.add-to-cart');
-                addToCartBtn.addEventListener('click', (e) => {
+                addToCartBtn.addEventListener('click', async (e) => {
                     e.stopPropagation();
-                    addToCart(product.id);
+                    await addToCart(product.id);
                 });
-                
+
                 container.appendChild(productCard);
             });
         }
-        
-        // 添加到购物车
-        function addToCart(productId, quantity = 1, buyNow = false) {
-            // 检查是否已登录
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (!currentUser) {
-                alert('请先登录！');
-                window.location.href = 'login.html';
-                return;
-            }
-            
-            const product = mockProducts.find(p => p.id === productId);
-            if (!product) return;
-            
-            // 检查商品是否已在购物车中
-            const existingItemIndex = cartItems.findIndex(item => item.id === productId);
-            
-            if (existingItemIndex !== -1) {
-                // 更新数量
-                cartItems[existingItemIndex].quantity += quantity;
-            } else {
-                // 添加新商品
-                cartItems.push({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    image: product.image,
-                    quantity: quantity
-                });
-            }
-            
-            // 保存到本地存储
-            localStorage.setItem('cart', JSON.stringify(cartItems));
-            
-            // 更新购物车数量
-            updateCartCount();
-            
-            // 显示成功消息
-            alert(`成功添加 ${quantity} 件商品到购物车！`);
-            
-            // 如果是立即购买，跳转到购物车页面
-            if (buyNow) {
-                window.location.href = 'cart.html';
+
+        async function addToCart(productId, quantity = 1, buyNow = false) {
+            try {
+                await apiAddToCart(productId, quantity);
+                await refreshCartCount();
+                alert(`成功添加 ${quantity} 件商品到购物车！`);
+                if (buyNow) {
+                    window.location.href = 'cart.html';
+                }
+            } catch (err) {
+                if (err.status === 401) {
+                    alert('请先登录！');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                alert(err.message || '添加到购物车失败');
             }
         }
-        
-        // 更新购物车数量
-        function updateCartCount() {
-            const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
-            const cartCount = document.getElementById('cartCount');
-            if (cartCount) {
-                cartCount.textContent = totalItems;
-            }
-        }
-        
-        // 初始化首页
+
         function initHomePage() {
-            renderProducts('hotProducts', mockProducts.slice(0, 8));
-            renderProducts('recommendedProducts', mockProducts.slice(2, 10));
+            renderProducts('hotProducts', products.slice(0, 8));
+            renderProducts('recommendedProducts', products.slice(2, 10));
         }
-        
-        // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            // 检查登录状态
-            const currentUser = localStorage.getItem('currentUser');
-            
-            // 更新购物车数量
-            updateCartCount();
-            
-            // 初始化首页
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadProducts();
+            await refreshCartCount();
             initHomePage();
-            
-            // 搜索功能
+
             document.getElementById('searchButton').addEventListener('click', () => {
                 const keyword = document.getElementById('searchInput').value.trim();
                 if (keyword) {
-                // 跳转到搜索页面
                     window.location.href = `search.html?q=${encodeURIComponent(keyword)}`;
                 } else {
-                alert('请输入搜索关键词');
+                    alert('请输入搜索关键词');
                 }
             });
 
@@ -379,30 +245,26 @@
                     document.getElementById('searchButton').click();
                 }
             });
-            
-            // 用户头像点击
+
             document.getElementById('userAvatar').addEventListener('click', function() {
+                const currentUser = localStorage.getItem('currentUser');
                 if (currentUser) {
                     const user = JSON.parse(currentUser);
-                    alert(`欢迎 ${user.name}`);
+                    alert(`欢迎 ${user.name || user.username}`);
                 } else {
                     window.location.href = 'login.html';
                 }
             });
-            
-            // 客户服务
+
             document.getElementById('customerServiceLink').addEventListener('click', function() {
                 alert('客服功能正在开发中...');
             });
-            
-            // 分类链接
+
             document.querySelectorAll('.category-link').forEach(link => {
-                link.addEventListener('click', function() {
-                    const category = this.dataset.category;
-                    if (category === 'all') {
+                link.addEventListener('click', function(e) {
+                    if (this.dataset.category === 'all') {
+                        e.preventDefault();
                         initHomePage();
-                    } else {
-                        alert(`显示${this.textContent}分类的商品`);
                     }
                 });
             });

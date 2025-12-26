@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>在线电商平台 - 确认订单</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="common.css">
+        <link rel="stylesheet" href="assets/css/common.css">
     <style>
 .order-header {
             border-bottom: 2px solid #ff0036;
@@ -452,87 +451,75 @@
         </div>
     </footer>
 
+    <script src="assets/js/shared-data.js"></script>
     <script>
-        // 购物车数据
-        let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-        
-        // 订单数据
-        let orders = JSON.parse(localStorage.getItem('orders')) || [
-            {
-                id: 'OD202301010001',
-                date: '2023-01-01 10:30:25',
-                status: 'completed',
-                total: 698,
-                items: [
-                    { id: 1, name: '智能运动手表', price: 399, quantity: 1, image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
-                    { id: 2, name: '无线蓝牙耳机', price: 299, quantity: 1, image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' }
-                ],
-                address: '北京市朝阳区建国路88号SOHO现代城A座1001室',
-                payment: '支付宝'
-            },
-            {
-                id: 'OD202301150012',
-                date: '2023-01-15 14:20:10',
-                status: 'delivered',
-                total: 289,
-                items: [
-                    { id: 4, name: '男士运动跑步鞋', price: 289, quantity: 1, image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' }
-                ],
-                address: '北京市海淀区中关村大街1号海龙大厦15层1502室',
-                payment: '微信支付'
-            },
-            {
-                id: 'OD202302030025',
-                date: '2023-02-03 09:15:45',
-                status: 'shipped',
-                total: 5999,
-                items: [
-                    { id: 5, name: '轻薄笔记本电脑', price: 5999, quantity: 1, image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' }
-                ],
-                address: '北京市朝阳区建国路88号SOHO现代城A座1001室',
-                payment: '支付宝'
-            },
-            {
-                id: 'OD202302200038',
-                date: '2023-02-20 16:45:30',
-                status: 'pending',
-                total: 399,
-                items: [
-                    { id: 6, name: '机械键盘', price: 399, quantity: 1, image: 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' }
-                ],
-                address: '北京市朝阳区建国路88号SOHO现代城A座1001室',
-                payment: '支付宝'
+        let cartItems = [];
+        let addresses = [];
+        let selectedAddressId = null;
+        let selectedPaymentMethod = 'alipay';
+        let selectedItemIds = [];
+
+        async function initOrderPage() {
+            try {
+                await apiGetCurrentUser();
+            } catch (err) {
+                if (err.status === 401) {
+                    alert('请先登录！');
+                    window.location.href = 'login.html';
+                    return;
+                }
             }
-        ];
-        
-        // 更新购物车数量
-        function updateCartCount() {
-            const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
-            const cartCount = document.getElementById('cartCount');
-            if (cartCount) {
-                cartCount.textContent = totalItems;
+
+            const storedIds = sessionStorage.getItem('selectedCartItemIds');
+            if (storedIds) {
+                try {
+                    selectedItemIds = JSON.parse(storedIds) || [];
+                } catch (err) {
+                    selectedItemIds = [];
+                }
             }
-        }
-        
-        // 初始化订单页面
-        function initOrderPage() {
-            const selectedItems = cartItems.filter(item => item.selected);
-            
-            if (selectedItems.length === 0) {
-                alert('购物车中没有选中的商品');
+
+            try {
+                cartItems = await apiGetCart();
+                if (selectedItemIds.length) {
+                    cartItems = cartItems.filter(item => selectedItemIds.includes(item.cartId));
+                }
+            } catch (err) {
+                if (err.status === 401) {
+                    alert('请先登录！');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                cartItems = [];
+            }
+
+            if (!cartItems.length) {
+                alert('购物车为空，无法提交订单');
                 window.location.href = 'cart.html';
                 return;
             }
-            
-            // 计算总价
-            const totalPrice = selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            
+
+            try {
+                addresses = await apiGetAddresses();
+            } catch (err) {
+                addresses = [];
+            }
+
+            const defaultAddr = addresses.find(addr => addr.is_default);
+            selectedAddressId = defaultAddr ? defaultAddr.id : (addresses[0]?.id || null);
+
+            renderOrderPage();
+        }
+
+        function renderOrderPage() {
+            const totalPrice = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
             const orderContent = document.getElementById('orderContent');
             orderContent.innerHTML = `
                 <div class="order-header">
                     <h1><i class="fas fa-file-invoice-dollar"></i> 确认订单</h1>
                 </div>
-                
+
                 <div class="order-steps">
                     <div class="step active">
                         <div class="step-icon">1</div>
@@ -540,242 +527,252 @@
                     </div>
                     <div class="step">
                         <div class="step-icon">2</div>
-                        <div class="step-text">付款</div>
+                        <div class="step-text">支付</div>
                     </div>
                     <div class="step">
                         <div class="step-icon">3</div>
                         <div class="step-text">完成</div>
                     </div>
                 </div>
-                
+
                 <div class="order-section">
-                    <h2><i class="fas fa-map-marker-alt"></i> 选择收货地址</h2>
-                    <div class="address-list">
-                        <div class="address-item selected">
-                            <div class="address-name">张三</div>
-                            <div class="address-phone">138****5678</div>
-                            <div class="address-detail">北京市朝阳区建国路88号SOHO现代城A座1001室</div>
-                        </div>
-                        <div class="address-item">
-                            <div class="address-name">张三 (公司)</div>
-                            <div class="address-phone">138****5678</div>
-                            <div class="address-detail">北京市海淀区中关村大街1号海龙大厦15层1502室</div>
-                        </div>
-                        <button class="btn-add-address">
-                            <i class="fas fa-plus"></i> 添加新地址
+                    <h2><i class="fas fa-map-marker-alt"></i> 收货地址</h2>
+                    <div class="address-list" id="addressList">
+                        ${renderAddressItems()}
+                        <button class="btn-add-address" id="addAddressBtn">
+                            <i class="fas fa-plus"></i> 新增地址
                         </button>
                     </div>
                 </div>
-                
+
                 <div class="order-section">
-                    <h2><i class="fas fa-shopping-cart"></i> 订单商品</h2>
+                    <h2><i class="fas fa-shopping-cart"></i> 商品信息</h2>
                     <div class="order-items" id="orderItems">
-                        ${selectedItems.map(item => `
+                        ${cartItems.map(item => `
                             <div class="order-item">
                                 <div class="order-item-image">
                                     <img src="${item.image}" alt="${item.name}">
                                 </div>
                                 <div class="order-item-info">
                                     <div class="order-item-name">${item.name}</div>
-                                    <div class="order-item-spec">颜色: 黑色 | 版本: 标准版</div>
-                                    <div class="order-item-price">¥${item.price.toFixed(2)}</div>
+                                    <div class="order-item-spec">规格：默认</div>
+                                    <div class="order-item-price">&yen;${item.price.toFixed(2)}</div>
                                 </div>
-                                <div class="order-item-quantity">×${item.quantity}</div>
+                                <div class="order-item-quantity">数量：${item.quantity}</div>
                             </div>
                         `).join('')}
                     </div>
                 </div>
-                
+
                 <div class="order-section">
-                    <h2><i class="fas fa-credit-card"></i> 选择支付方式</h2>
+                    <h2><i class="fas fa-credit-card"></i> 支付方式</h2>
                     <div class="payment-methods">
-                        <div class="payment-method selected">
+                        <div class="payment-method selected" data-method="alipay">
                             <div class="payment-icon"><i class="fab fa-alipay"></i></div>
                             <div class="payment-name">支付宝</div>
-                            <div class="payment-desc">推荐支付宝用户使用</div>
+                            <div class="payment-desc">推荐使用支付宝</div>
                         </div>
-                        <div class="payment-method">
+                        <div class="payment-method" data-method="wechat">
                             <div class="payment-icon"><i class="fab fa-weixin"></i></div>
                             <div class="payment-name">微信支付</div>
-                            <div class="payment-desc">推荐微信用户使用</div>
+                            <div class="payment-desc">微信安全支付</div>
                         </div>
-                        <div class="payment-method">
+                        <div class="payment-method" data-method="bank">
                             <div class="payment-icon"><i class="fas fa-credit-card"></i></div>
-                            <div class="payment-name">银行卡支付</div>
-                            <div class="payment-desc">支持储蓄卡/信用卡</div>
+                            <div class="payment-name">银行卡</div>
+                            <div class="payment-desc">储蓄卡/信用卡</div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="order-section">
                     <h2><i class="fas fa-receipt"></i> 订单汇总</h2>
                     <div class="order-summary">
                         <div class="summary-row">
-                            <span class="summary-label">商品总额</span>
-                            <span class="summary-value">¥${totalPrice.toFixed(2)}</span>
+                            <span class="summary-label">商品金额</span>
+                            <span class="summary-value">&yen;${totalPrice.toFixed(2)}</span>
                         </div>
                         <div class="summary-row">
                             <span class="summary-label">运费</span>
-                            <span class="summary-value">¥0.00</span>
+                            <span class="summary-value">&yen;0.00</span>
                         </div>
                         <div class="summary-row">
                             <span class="summary-label">优惠</span>
-                            <span class="summary-value">-¥20.00</span>
+                            <span class="summary-value">-&yen;0.00</span>
                         </div>
                         <div class="summary-row total">
                             <span class="summary-label">应付总额</span>
-                            <span class="summary-value">¥${(totalPrice - 20).toFixed(2)}</span>
+                            <span class="summary-value">&yen;${totalPrice.toFixed(2)}</span>
                         </div>
                     </div>
-                    
+
                     <button class="btn-place-order" id="placeOrderBtn">提交订单</button>
                 </div>
             `;
-            
-            // 设置订单页面事件
-            setupOrderEvents();
+
+            bindEvents();
         }
-        
-        // 设置订单页面事件
-        function setupOrderEvents() {
-            // 选择收货地址
+
+        function renderAddressItems() {
+            if (!addresses.length) {
+                return '<div style="width:100%; color:#666; font-size:14px;">请先添加收货地址</div>';
+            }
+            return addresses.map(addr => `
+                <div class="address-item ${addr.id === selectedAddressId ? 'selected' : ''}" data-id="${addr.id}">
+                    <div class="address-name">${addr.recipient}</div>
+                    <div class="address-phone">${addr.phone}</div>
+                    <div class="address-detail">${addr.province}${addr.city}${addr.district}${addr.detail}</div>
+                </div>
+            `).join('');
+        }
+
+        async function addAddressByPrompt() {
+            const recipient = prompt('\u8bf7\u8f93\u5165\u6536\u8d27\u4eba\u59d3\u540d');
+            if (!recipient) return;
+            const phone = prompt('\u8bf7\u8f93\u5165\u0031\u0031\u4f4d\u624b\u673a\u53f7');
+            if (!phone) return;
+            const province = prompt('\u7701\u4efd');
+            if (!province) return;
+            const city = prompt('\u57ce\u5e02');
+            if (!city) return;
+            const district = prompt('\u533a/\u53bf');
+            if (!district) return;
+            const detail = prompt('\u8be6\u7ec6\u5730\u5740');
+            if (!detail) return;
+
+            try {
+                await apiAddAddress({
+                    recipient,
+                    phone,
+                    province,
+                    city,
+                    district,
+                    detail,
+                    is_default: !addresses.length
+                });
+                addresses = await apiGetAddresses();
+                const defaultAddr = addresses.find(addr => addr.is_default);
+                selectedAddressId = defaultAddr ? defaultAddr.id : (addresses[0]?.id || null);
+                renderOrderPage();
+            } catch (err) {
+                alert(err.message || '新增地址失败');
+            }
+        }
+
+        function bindEvents() {
             document.querySelectorAll('.address-item').forEach(item => {
                 item.addEventListener('click', function() {
-                    document.querySelectorAll('.address-item').forEach(i => {
-                        i.classList.remove('selected');
-                    });
+                    document.querySelectorAll('.address-item').forEach(i => i.classList.remove('selected'));
                     this.classList.add('selected');
+                    selectedAddressId = Number(this.dataset.id);
                 });
             });
-            
-            // 选择支付方式
+
+            document.getElementById('addAddressBtn')?.addEventListener('click', addAddressByPrompt);
+
             document.querySelectorAll('.payment-method').forEach(method => {
                 method.addEventListener('click', function() {
-                    document.querySelectorAll('.payment-method').forEach(m => {
-                        m.classList.remove('selected');
-                    });
+                    document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
                     this.classList.add('selected');
+                    selectedPaymentMethod = this.dataset.method;
                 });
             });
-            
-            // 提交订单
-            document.getElementById('placeOrderBtn').addEventListener('click', function() {
-                // 模拟订单提交
-                const orderNumber = 'OD' + Date.now();
-                const selectedItems = cartItems.filter(item => item.selected);
-                const totalPrice = selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0) - 20;
-                
-                // 创建新订单
-                const newOrder = {
-                    id: orderNumber,
-                    date: new Date().toLocaleString(),
-                    status: 'pending',
-                    total: totalPrice,
-                    items: selectedItems.map(item => ({
-                        id: item.id,
-                        name: item.name,
-                        price: item.price,
-                        quantity: item.quantity,
-                        image: item.image
-                    })),
-                    address: '北京市朝阳区建国路88号SOHO现代城A座1001室',
-                    payment: '支付宝'
-                };
-                
-                // 添加到订单列表
-                orders.unshift(newOrder);
-                localStorage.setItem('orders', JSON.stringify(orders));
-                
-                document.getElementById('orderContent').innerHTML = `
-                    <div class="order-success">
-                        <i class="fas fa-check-circle"></i>
-                        <h2>订单提交成功！</h2>
-                        <p>您的订单已成功提交，订单编号: <strong>${orderNumber}</strong><br>
-                        我们将在24小时内为您发货，请保持手机畅通</p>
-                        
-                        <div class="order-details">
-                            <h3>订单信息</h3>
-                            <div class="order-detail-row">
-                                <div class="order-detail-label">订单编号</div>
-                                <div class="order-detail-value">${orderNumber}</div>
+
+            document.getElementById('placeOrderBtn')?.addEventListener('click', async function() {
+                if (!selectedAddressId) {
+                    alert('请选择收货地址');
+                    return;
+                }
+
+                try {
+                    const payload = {
+                        address_id: selectedAddressId,
+                        payment_method: selectedPaymentMethod
+                    };
+                    if (selectedItemIds.length) {
+                        payload.item_ids = selectedItemIds;
+                    }
+
+                    const order = await apiCreateOrder(payload);
+                    await refreshCartCount();
+
+                    const address = addresses.find(addr => addr.id === selectedAddressId);
+
+                    document.getElementById('orderContent').innerHTML = `
+                        <div class="order-success">
+                            <i class="fas fa-check-circle"></i>
+                            <h2>订单提交成功</h2>
+                            <p>您的订单已提交成功，订单号: <strong>${order.order_number}</strong><br>
+                            请在24小时内完成支付，过期订单将自动取消</p>
+
+                            <div class="order-details">
+                                <h3>订单信息</h3>
+                                <div class="order-detail-row">
+                                    <div class="order-detail-label">订单号</div>
+                                    <div class="order-detail-value">${order.order_number}</div>
+                                </div>
+                                <div class="order-detail-row">
+                                    <div class="order-detail-label">订单金额</div>
+                                    <div class="order-detail-value">&yen;${Number(order.total_amount).toFixed(2)}</div>
+                                </div>
+                                <div class="order-detail-row">
+                                    <div class="order-detail-label">支付方式</div>
+                                    <div class="order-detail-value">${selectedPaymentMethod === 'wechat' ? '\u5fae\u4fe1\u652f\u4ed8' : selectedPaymentMethod === 'bank' ? '\u94f6\u884c\u5361' : '\u652f\u4ed8\u5b9d'}</div>
+                                </div>
+                                <div class="order-detail-row">
+                                    <div class="order-detail-label">收货地址</div>
+                                    <div class="order-detail-value">${address ? `${address.province}${address.city}${address.district}${address.detail}` : ''}</div>
+                                </div>
                             </div>
-                            <div class="order-detail-row">
-                                <div class="order-detail-label">支付金额</div>
-                                <div class="order-detail-value">¥${totalPrice.toFixed(2)}</div>
-                            </div>
-                            <div class="order-detail-row">
-                                <div class="order-detail-label">支付方式</div>
-                                <div class="order-detail-value">支付宝</div>
-                            </div>
-                            <div class="order-detail-row">
-                                <div class="order-detail-label">收货地址</div>
-                                <div class="order-detail-value">北京市朝阳区建国路88号SOHO现代城A座1001室</div>
+
+                            <div style="margin-top: 30px;">
+                                <button class="btn-shopping" id="continueShoppingBtn" style="margin-right: 15px;">继续购物</button>
+                                <button class="btn-checkout" id="viewOrderBtn">查看订单</button>
                             </div>
                         </div>
-                        
-                        <div style="margin-top: 30px;">
-                            <button class="btn-shopping" id="continueShoppingBtn" style="margin-right: 15px;">继续购物</button>
-                            <button class="btn-checkout" id="viewOrderBtn">查看订单</button>
-                        </div>
-                    </div>
-                `;
-                
-                // 清空购物车中已购买的商品
-                cartItems = cartItems.filter(item => !item.selected);
-                localStorage.setItem('cart', JSON.stringify(cartItems));
-                updateCartCount();
-                
-                // 添加事件监听器
-                document.getElementById('continueShoppingBtn').addEventListener('click', () => {
-                    window.location.href = 'index.html';
-                });
-                
-                document.getElementById('viewOrderBtn').addEventListener('click', () => {
-                    window.location.href = 'orders.html';
-                });
+                    `;
+
+                    document.getElementById('continueShoppingBtn').addEventListener('click', () => {
+                        window.location.href = 'index.html';
+                    });
+
+                    document.getElementById('viewOrderBtn').addEventListener('click', () => {
+                        window.location.href = 'orders.html';
+                    });
+                } catch (err) {
+                    alert(err.message || '提交订单失败');
+                }
             });
         }
-        
-        // 页面加载完成后初始化
+
         document.addEventListener('DOMContentLoaded', function() {
-            // 检查登录状态
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (!currentUser) {
-                alert('请先登录！');
-                window.location.href = 'login.html';
-                return;
-            }
-            
-            // 更新购物车数量
-            updateCartCount();
-            
-            // 初始化订单页面
-            initOrderPage();
-            
-            // 搜索功能
+            refreshCartCount();
+
             document.getElementById('searchButton').addEventListener('click', function() {
                 const query = document.getElementById('searchInput').value.trim();
                 if (query) {
-                    alert(`搜索: ${query}`);
+                    window.location.href = `search.html?q=${encodeURIComponent(query)}`;
                 } else {
-                    alert('请输入搜索关键词');
+                    alert('请选择收货地址');
                 }
             });
-            
-            // 用户头像点击
+
             document.getElementById('userAvatar').addEventListener('click', function() {
+                const currentUser = localStorage.getItem('currentUser');
                 if (currentUser) {
-                    alert(`欢迎 ${currentUser.name}`);
+                    const user = JSON.parse(currentUser);
+                    alert(`\u6b22\u8fce ${user.name || user.username}`);
                 } else {
                     window.location.href = 'login.html';
                 }
             });
-            
-            // 客户服务
+
             document.getElementById('customerServiceLink').addEventListener('click', function() {
                 alert('客服功能正在开发中...');
             });
+
+            initOrderPage();
         });
     </script>
 </body>
-</html>
+</html>·

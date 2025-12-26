@@ -14,8 +14,6 @@
 
 • 注册 / 登录 / 退出
 
-• 查看个人信息
-
 • 查看订单记录
 
 🛍 商品功能
@@ -45,7 +43,7 @@
 • 管理员订单管理
 
 
-🧱 3. 项目结构（推荐）
+🧱 3. 项目结构
 
 
 ecommerce/
@@ -60,13 +58,9 @@ ecommerce/
 
 │   ├── routes/
 
-│   ├── templates/        # Jinja2 模板
-
-│   └── static/           # 静态资源
-
 │
 
-├── frontend/             # 若前后端分离可使用
+├── frontend/             
 
 │   ├── html/
 
@@ -78,13 +72,13 @@ ecommerce/
 
 └── docs/                 # 文档（需求/设计/测试）
 
-    ├── requirements.md
-    
-    ├── design.md
-    
-    ├── test.md
-    
-    └── usage.md
+│   ├── requirements.md
+
+│   ├── design.md
+
+│   ├── test.md
+
+│   └── usage.md
 
 
 
@@ -93,11 +87,14 @@ ecommerce/
 🚀 4. 环境配置与运行
 
 4.1 安装依赖
+~~~
 pip install Flask
 pip install flask-cors
 pip install sqlalchemy
+~~~
 
 4.2 启动后端
+
 python app.py
 
 
@@ -105,7 +102,7 @@ python app.py
 
 http://127.0.0.1:5000
 
-4.3 启动前端（可选）
+4.3 启动前端
 
 直接打开 frontend/*.html 即可，或使用 VSCode Live Server。
 
@@ -118,55 +115,36 @@ http://127.0.0.1:5000
 购物车	POST	/api/v1/cart	加入购物车
 购物车	DELETE	/api/v1/cart/<id>	删除购物车商品
 订单	POST	/api/v1/order	创建订单
+
 🧩 6. 技术栈
 
 后端：
 
-Flask
+    Flask
 
-SQLAlchemy
+    SQLAlchemy
 
-Jinja2 模板
+    Jinja2 模板
 
-Session / Cookie 认证
+    Session / Cookie 认证
 
 前端：
 
-HTML / CSS / JavaScript
+    HTML / CSS / JavaScript
 
-Axios
+    Axios
 
-Mock.js（可选，用于接口模拟）
+
 
 👥 7. 团队分工（示例，可自行改名）
 成员	负责内容
-A	后端开发（用户/购物车/订单 API）
-B	前端开发（商品页面、交互逻辑）
-C	文档与测试（需求、设计、测试、说明书）
-🔧 8. Git 协作规范
-分支模型
-main              # 稳定版本
-dev               # 开发主分支
-feature/user      # 用户模块开发
-feature/product   # 商品模块开发
-feature/cart      # 购物车开发
-docs              # 文档
-
-提交规范（Commit Message）
-feat: 新功能
-fix: 修复问题
-docs: 文档更新
-refactor: 代码重构
-style: 格式调整
+黄剑	后端开发（用户/购物车/订单 API）
+张芷蕊	前端开发（商品页面、交互逻辑）
+徐振北	文档与测试（需求、设计、测试、说明书）
 
 
-示例：
 
-feat(user): 完成登录接口
-fix(cart): 修复数量更新问题
-docs(requirements): 撰写需求文档
-
-🧪 9. 测试情况（概述）
+🧪 8. 测试情况（概述）
 
 登录/注册：正常
 
@@ -178,8 +156,7 @@ docs(requirements): 撰写需求文档
 
 API 响应时间：均小于 1s
 
-详见 docs/test.md。
 
-📄 10. 项目声明
+📄 9. 项目声明
 
 本项目用于课程学习和教学实验，不用于商业用途。

@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>在线电商平台</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="common.css">
+        <link rel="stylesheet" href="assets/css/common.css">
 </head>
 <body>
     <!-- 顶部导航栏 -->
@@ -159,76 +158,60 @@
         </div>
     </footer>
 
+    <script src="assets/js/shared-data.js"></script>
     <script>
-        // 购物车数据
-        let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-        
-        // 更新购物车数量
-        function updateCartCount() {
-            const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
-            const cartCount = document.getElementById('cartCount');
-            if (cartCount) {
-                cartCount.textContent = totalItems;
-            }
-        }
-        
-        // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            // 检查登录状态
-            const currentUser = localStorage.getItem('currentUser');
-            
-            // 更新购物车数量
-            updateCartCount();
-            
-            // 登录表单提交
-            document.getElementById('loginForm').addEventListener('submit', function(e) {
+        document.addEventListener('DOMContentLoaded', async function() {
+            await refreshCartCount();
+
+            const storedUser = localStorage.getItem('currentUser');
+
+            document.getElementById('loginForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
-                
-                const username = document.getElementById('username').value;
+
+                const identifier = document.getElementById('username').value.trim();
                 const password = document.getElementById('password').value;
-                
-                // 简单验证
-                if (username === 'admin' && password === 'admin') {
-                    currentUser = { username: 'admin', name: '管理员' };
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                const errorEl = document.getElementById('loginErrorMessage');
+                errorEl.classList.remove('show');
+
+                if (!identifier || !password) {
+                    errorEl.textContent = '请输入账号和密码';
+                    errorEl.classList.add('show');
+                    return;
+                }
+
+                try {
+                    await apiLogin(identifier, password, true);
                     alert('登录成功！');
                     window.location.href = 'index.html';
-                } else if (username && password) {
-                    currentUser = { username, name: username };
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    alert('登录成功！');
-                    window.location.href = 'index.html';
-                } else {
-                    document.getElementById('loginErrorMessage').classList.add('show');
+                } catch (err) {
+                    errorEl.textContent = err.message || '登录失败';
+                    errorEl.classList.add('show');
                 }
             });
-            
-            // 忘记密码
+
             document.querySelector('.forgot-password').addEventListener('click', function() {
-                alert('忘记密码功能正在开发中...');
+                alert('找回密码功能开发中...');
             });
-            
-            // 搜索功能
+
             document.getElementById('searchButton').addEventListener('click', function() {
                 const query = document.getElementById('searchInput').value.trim();
                 if (query) {
-                    alert(`搜索: ${query}`);
+                    window.location.href = `search.html?q=${encodeURIComponent(query)}`;
                 } else {
                     alert('请输入搜索关键词');
                 }
             });
-            
-            // 用户头像点击
+
             document.getElementById('userAvatar').addEventListener('click', function() {
-                if (currentUser) {
-                    const user = JSON.parse(currentUser);
-                    alert(`欢迎 ${user.name}`);
+                if (storedUser) {
+                    const user = JSON.parse(storedUser);
+                    alert(`欢迎 ${user.name || user.username}`);
                 } else {
                     window.location.href = 'login.html';
                 }
             });
-            
-            // 客户服务
+
             document.getElementById('customerServiceLink').addEventListener('click', function() {
                 alert('客服功能正在开发中...');
             });

@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>运动户外 - 在线电商平台</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="common.css">
+        <link rel="stylesheet" href="assets/css/common.css">
     <style>
         /* 运动户外页面特有样式 */
         .category-header {
@@ -219,7 +218,7 @@
     <div class="container main-content">
         <!-- 促销横幅 -->
         <div class="banner" style="margin-bottom: 30px; height: 300px; border-radius: 8px; overflow: hidden;">
-            <img src="https://images.unsplash.com/photo-1536922246289-88c42f957773?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="运动户外促销" style="width: 100%; height: 100%; object-fit: cover;">
+            <img src="assets/img/products/d80f77d8a690ec7feac0eecc9f2e6669.jpg" alt="运动户外促销" style="width: 100%; height: 100%; object-fit: cover;">
         </div>
         
         <!-- 热门推荐 -->
@@ -290,13 +289,14 @@
         </div>
     </footer>
 
+    <script src="assets/js/shared-data.js"></script>
     <script>
         // 运动户外数据
         const sportsProducts = [
             {
                 id: 601,
                 name: '跑步机 家用健身器材 可折叠 静音设计',
-                image: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/b37e619a174250093f1b84bf4292e683.jpg',
                 price: 1999,
                 originalPrice: 2599,
                 category: 'fitness',
@@ -305,7 +305,7 @@
             {
                 id: 602,
                 name: '瑜伽垫 加厚防滑 运动健身必备',
-                image: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/b37e619a174250093f1b84bf4292e683.jpg',
                 price: 89,
                 originalPrice: 129,
                 category: 'fitness',
@@ -314,7 +314,7 @@
             {
                 id: 603,
                 name: '登山包 大容量 防水设计 背负舒适',
-                image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/a4f4c7656e3aa55e9aa3c3baa5a95b23.jpg',
                 price: 299,
                 originalPrice: 399,
                 category: 'outdoor',
@@ -332,7 +332,7 @@
             {
                 id: 605,
                 name: '帐篷 户外露营 防风防水 易搭建',
-                image: 'https://images.unsplash.com/photo-1504851149312-7a075b496cc7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/a821ca9c044ad18fa936d08664feab75.jpg',
                 price: 399,
                 originalPrice: 499,
                 category: 'outdoor',
@@ -341,7 +341,7 @@
             {
                 id: 606,
                 name: '动感单车 家用健身 静音磁控',
-                image: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/b37e619a174250093f1b84bf4292e683.jpg',
                 price: 1499,
                 originalPrice: 1999,
                 category: 'fitness',
@@ -350,7 +350,7 @@
             {
                 id: 607,
                 name: '睡袋 保暖舒适 适合户外露营',
-                image: 'https://images.unsplash.com/photo-1504851149312-7a075b496cc7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/a821ca9c044ad18fa936d08664feab75.jpg',
                 price: 189,
                 originalPrice: 239,
                 category: 'outdoor',
@@ -359,13 +359,28 @@
             {
                 id: 608,
                 name: '健身服 透气速干 运动套装',
-                image: 'https://images.unsplash.com/photo-1594381898411-846e7d193883?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/f5286d8c4294bb389a4906a8b5328007.jpg',
                 price: 159,
                 originalPrice: 199,
                 category: 'fitness',
                 description: '健身服，透气速干面料。'
             }
         ];
+
+        let pageProducts = sportsProducts;
+        const pageCategories = new Set(pageProducts.map(p => p.category).filter(Boolean));
+
+        async function loadPageProducts() {
+            try {
+                const allProducts = await apiGetProducts({ per_page: 200 });
+                pageProducts = pageCategories.size
+                    ? allProducts.filter(p => pageCategories.has(p.category))
+                    : allProducts;
+            } catch (err) {
+                pageProducts = sportsProducts;
+            }
+        }
+
         
         // 渲染商品列表
         function renderProducts(containerId, products) {
@@ -407,45 +422,33 @@
         }
         
         function showProductDetail(productId) {
-            const product = sportsProducts.find(p => p.id === productId);
+            const product = pageProducts.find(p => p.id === productId);
             if (product) {
                 window.location.href = `product-detail.html?id=${product.id}`;
             }
         }
         
         function addToCart(productId) {
-            const product = sportsProducts.find(p => p.id === productId);
+            const product = pageProducts.find(p => p.id === productId);
             if (!product) return;
-            
-            let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-            const existingItemIndex = cartItems.findIndex(item => item.id === productId);
-            
-            if (existingItemIndex !== -1) {
-                cartItems[existingItemIndex].quantity += 1;
-            } else {
-                cartItems.push({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    image: product.image,
-                    quantity: 1
-                });
-            }
-            
-            localStorage.setItem('cart', JSON.stringify(cartItems));
-            updateCartCount();
-            alert(`成功添加 "${product.name}" 到购物车！`);
+
+            apiAddToCart(product.id, 1).then(async () => {
+                await refreshCartCount();
+                alert(`Added "${product.name}" to cart.`);
+            }).catch(err => {
+                if (err.status === 401) {
+                    alert('Please log in first.');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                alert(err.message || 'Failed to add to cart.');
+            });
         }
-        
-        function updateCartCount() {
-            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-            const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
-            const cartCountElement = document.getElementById('cartCount');
-            if (cartCountElement) {
-                cartCountElement.textContent = totalItems;
-            }
+
+        async function updateCartCount() {
+            await refreshCartCount();
         }
-        
+
         function performSearch() {
             const query = document.getElementById('searchInput').value.trim();
             if (query) {
@@ -455,12 +458,13 @@
             }
         }
         
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadPageProducts();
             updateCartCount();
             
-            const hotProducts = sportsProducts.slice(0, 5);
-            const fitnessEquipment = sportsProducts.filter(p => p.category === 'fitness');
-            const outdoorEquipment = sportsProducts.filter(p => p.category === 'outdoor');
+            const hotProducts = pageProducts.slice(0, 5);
+            const fitnessEquipment = pageProducts.filter(p => p.category === 'fitness');
+            const outdoorEquipment = pageProducts.filter(p => p.category === 'outdoor');
             
             renderProducts('hotProducts', hotProducts);
             renderProducts('fitnessEquipment', fitnessEquipment);

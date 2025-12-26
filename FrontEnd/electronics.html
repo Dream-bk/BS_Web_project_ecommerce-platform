@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>电子产品 - 在线电商平台</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="common.css">
+        <link rel="stylesheet" href="assets/css/common.css">
     <style>
         /* 分类页面特有样式 */
         .category-header {
@@ -287,7 +286,7 @@
     <div class="container main-content">
         <!-- 促销横幅 -->
         <div class="banner" style="margin-bottom: 30px; height: 300px; border-radius: 8px; overflow: hidden;">
-            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="电子产品促销" style="width: 100%; height: 100%; object-fit: cover;">
+            <img src="assets/img/products/73c4cb520f44030a61f39195a6386dfb.jpg" alt="电子产品促销" style="width: 100%; height: 100%; object-fit: cover;">
         </div>
         
         <!-- 热门推荐 -->
@@ -352,13 +351,14 @@
         </div>
     </footer>
 
+    <script src="assets/js/shared-data.js"></script>
     <script>
         // 电子产品数据
         const electronicsProducts = [
             {
                 id: 1,
                 name: '智能运动手表 多功能心率监测 GPS定位 蓝牙通话',
-                image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/64ec2c9c8af5471f2f4a922d4c3a2ff4.jpg',
                 price: 399,
                 originalPrice: 599,
                 category: 'smart',
@@ -367,7 +367,7 @@
             {
                 id: 2,
                 name: '无线蓝牙耳机 降噪耳机 运动耳机 超长续航',
-                image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/2b48182794f7914018a753b1ceeb9e33.jpg',
                 price: 299,
                 originalPrice: 499,
                 category: 'smart',
@@ -376,7 +376,7 @@
             {
                 id: 3,
                 name: '数码单反相机 高清4K视频拍摄 专业级摄影器材',
-                image: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/03cadfccd753c2c6cdde58c1bed4f0bb.jpg',
                 price: 4599,
                 originalPrice: 5999,
                 category: 'smart',
@@ -385,7 +385,7 @@
             {
                 id: 4,
                 name: '轻薄笔记本电脑 高性能处理器 超长续航 便携办公',
-                image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/bjbdn.webp',
                 price: 5999,
                 originalPrice: 6999,
                 category: 'computer',
@@ -394,7 +394,7 @@
             {
                 id: 5,
                 name: '机械键盘 游戏办公 背光RGB 可编程宏按键',
-                image: 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/jxjp.webp',
                 price: 399,
                 originalPrice: 599,
                 category: 'computer',
@@ -403,7 +403,7 @@
             {
                 id: 6,
                 name: '时尚智能手表 健康监测 运动模式 消息提醒',
-                image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/3740a915646c57aadded869b82f6cb8c.jpg',
                 price: 899,
                 originalPrice: 1299,
                 category: 'smart',
@@ -412,7 +412,7 @@
             {
                 id: 7,
                 name: '防水蓝牙音箱 便携迷你音箱 户外运动音响',
-                image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/7330f0792e26642df85d4e793d5a69a9.jpg',
                 price: 199,
                 originalPrice: 299,
                 category: 'accessory',
@@ -421,13 +421,28 @@
             {
                 id: 8,
                 name: '智能手机 全面屏 超清摄像头 大内存',
-                image: 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                image: 'assets/img/products/1c6dcc5679cbce0db1cc3425e1212e3e.jpg',
                 price: 1999,
                 originalPrice: 2599,
                 category: 'smart',
                 description: '高性能智能手机，满足日常使用需求。'
             }
         ];
+
+        let pageProducts = electronicsProducts;
+        const pageCategories = new Set(pageProducts.map(p => p.category).filter(Boolean));
+
+        async function loadPageProducts() {
+            try {
+                const allProducts = await apiGetProducts({ per_page: 200 });
+                pageProducts = pageCategories.size
+                    ? allProducts.filter(p => pageCategories.has(p.category))
+                    : allProducts;
+            } catch (err) {
+                pageProducts = electronicsProducts;
+            }
+        }
+
         
         // 渲染商品列表
         function renderProducts(containerId, products) {
@@ -472,7 +487,7 @@
         
         // 显示商品详情
         function showProductDetail(productId) {
-            const product = electronicsProducts.find(p => p.id === productId);
+            const product = pageProducts.find(p => p.id === productId);
             if (!product) return;
             
             // 这里可以跳转到商品详情页或弹窗显示
@@ -481,47 +496,26 @@
         
         // 添加到购物车
         function addToCart(productId) {
-            const product = electronicsProducts.find(p => p.id === productId);
+            const product = pageProducts.find(p => p.id === productId);
             if (!product) return;
-            
-            // 获取购物车数据
-            let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-            
-            // 检查商品是否已在购物车中
-            const existingItemIndex = cartItems.findIndex(item => item.id === productId);
-            
-            if (existingItemIndex !== -1) {
-                cartItems[existingItemIndex].quantity += 1;
-            } else {
-                cartItems.push({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    image: product.image,
-                    quantity: 1
-                });
-            }
-            
-            // 保存到本地存储
-            localStorage.setItem('cart', JSON.stringify(cartItems));
-            
-            // 更新购物车数量
-            updateCartCount();
-            
-            alert(`成功添加 "${product.name}" 到购物车！`);
+
+            apiAddToCart(product.id, 1).then(async () => {
+                await refreshCartCount();
+                alert(`Added "${product.name}" to cart.`);
+            }).catch(err => {
+                if (err.status === 401) {
+                    alert('Please log in first.');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                alert(err.message || 'Failed to add to cart.');
+            });
         }
-        
-        // 更新购物车数量
-        function updateCartCount() {
-            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-            const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
-            const cartCountElement = document.getElementById('cartCount');
-            if (cartCountElement) {
-                cartCountElement.textContent = totalItems;
-            }
+
+        async function updateCartCount() {
+            await refreshCartCount();
         }
-        
-        // 搜索功能
+
         function performSearch() {
             const query = document.getElementById('searchInput').value.trim();
             if (query) {
@@ -533,13 +527,14 @@
         }
         
         // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadPageProducts();
             // 更新购物车数量
             updateCartCount();
             
             // 渲染商品
-            const hotProducts = electronicsProducts.slice(0, 5);
-            const smartDevices = electronicsProducts.filter(p => p.category === 'smart');
+            const hotProducts = pageProducts.slice(0, 5);
+            const smartDevices = pageProducts.filter(p => p.category === 'smart');
             
             renderProducts('hotProducts', hotProducts);
             renderProducts('smartDevices', smartDevices);
